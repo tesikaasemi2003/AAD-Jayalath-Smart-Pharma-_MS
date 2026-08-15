@@ -8,18 +8,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long userId;
     private String fullName;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private authProvider authProvider;
-    private boolean enabled;
 }
