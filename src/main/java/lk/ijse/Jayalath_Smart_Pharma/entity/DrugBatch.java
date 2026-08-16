@@ -1,9 +1,6 @@
 package lk.ijse.Jayalath_Smart_Pharma.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,17 +13,31 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "drug_batches")
 public class DrugBatch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String batchId;
-    private long drugId;
-    private String BatchNumber;
+
+    @Column(unique = true , nullable = false )
+    private String batchNumber;
+    @Column(unique = true , nullable = false )
     private LocalDate manufactureDate;
+
+    @Column( nullable = false )
     private LocalDate expiryDate;
     private Double purchasePrice;
     private Double sellingPrice;
     private Double discountPercentage;
+
+    @Column(unique = true , nullable = false )
     private String barcodeString;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "drug_id", nullable = false)
+    private Drug drug;
+
+    @OneToOne(mappedBy = "drugBatch", cascade= CascadeType.ALL)
+    private Inventory inventory;
 
 }

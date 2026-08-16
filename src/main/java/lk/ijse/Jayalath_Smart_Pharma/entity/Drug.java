@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,5 +28,10 @@ public class Drug {
     private int reorderLevel;
     private String unit;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "category_id", nullable = false)
+    private Category category;
 
+    @OneToMany(mappedBy = "drug", cascade = CascadeType.ALL)
+    private List<DrugBatch> batches;
 }
