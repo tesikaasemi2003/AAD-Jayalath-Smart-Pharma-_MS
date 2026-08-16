@@ -14,13 +14,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "ai_analytics_logs")
 public class AiAnalyticsLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
     @Enumerated(EnumType.STRING)
     private analysisType analysisType;
+
+    @Column(columnDefinition = "TEXT")
     private long aiResponsePayload;
     private LocalDateTime generatedAt;
-    private long triggeredBy_userId;
+
+    @ManyToOne
+    @JoinColumn(name = "triggered_by_user_id ")
+    private User triggeredBy;
 }
