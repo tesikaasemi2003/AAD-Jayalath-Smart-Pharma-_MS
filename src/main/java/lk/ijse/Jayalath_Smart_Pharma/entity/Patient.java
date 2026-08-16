@@ -9,16 +9,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
-public class Doctor {
+@Setter
+public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long doctorId;
-    private String doctorName;
-    private String slmcRegistrationNo;
-    private String hospital;
+    private long patientId;
+    private String patientName;
+    private String patientPhone;
+    private String patientEmail;
+    private String nicOrPassport;
 }

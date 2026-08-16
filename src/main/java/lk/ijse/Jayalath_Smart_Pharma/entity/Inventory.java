@@ -1,9 +1,6 @@
 package lk.ijse.Jayalath_Smart_Pharma.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +13,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name= "Inventories")
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long inventoryId;
-    private long batchId;
+
+    @Column(nullable = false)
     private int quantityOnHand;
+
     private LocalDateTime lastUpdate;
+
+    @OneToOne
+    @JoinColumn(name = "batch_id", referencedColumnName = "")
 }
