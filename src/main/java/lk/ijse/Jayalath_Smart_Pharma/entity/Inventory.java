@@ -25,5 +25,6 @@ public class Inventory {
     private LocalDateTime lastUpdate;
 
     @OneToOne
-    @JoinColumn(name = "batch_id", referencedColumnName = "")
+    @JoinColumn(name = "batch_id", referencedColumnName = "batchId" ,nullable = false)
+    private DrugBatch drugBatch;
 }
