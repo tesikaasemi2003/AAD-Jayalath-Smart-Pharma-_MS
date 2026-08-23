@@ -1,5 +1,6 @@
 package lk.ijse.Jayalath_Smart_Pharma.service.Impl;
 
+import jakarta.transaction.Transactional;
 import lk.ijse.Jayalath_Smart_Pharma.dto.RoleDTO;
 import lk.ijse.Jayalath_Smart_Pharma.entity.Role;
 import lk.ijse.Jayalath_Smart_Pharma.repository.RoleRepository;
@@ -15,7 +16,8 @@ public class RoleServiceImpl implements RoleService {
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-
+ @Override
+ @Transactional
     public void saveRole(RoleDTO roleDTO) {
         log.info("Executing saveRole method");
         try {
