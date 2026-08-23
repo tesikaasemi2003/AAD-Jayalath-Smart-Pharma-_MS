@@ -70,4 +70,20 @@ public class CategoryServiceImpl implements CategoryService {
             throw e;
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteCategory(long categoryId) {
+        log.info("Executing deleteCategory method");
+        try{
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if(!optionalCategory.isPresent()){
+                throw new RuntimeException("Category not found");
+            }
+            categoryRepository.deleteById(categoryId);
+        }catch(Exception e){
+            log.error("Error in deleteCategory method" +e.getMessage());
+            throw e;
+        }
+    }
 }
