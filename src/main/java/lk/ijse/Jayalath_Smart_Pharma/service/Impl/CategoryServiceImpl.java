@@ -86,4 +86,22 @@ public class CategoryServiceImpl implements CategoryService {
             throw e;
         }
     }
+    @Override
+    @Transactional
+    public void updateCategory(CategoryDTO categoryDTO) {
+        log.info("Executing updateCategory method");
+        try{
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryDTO.getCategoryId());
+            if(!optionalCategory.isPresent()){
+                throw new RuntimeException("Category not found");
+            }
+            Category category = optionalCategory.get();
+            category.setCategoryDescription(categoryDTO.getCategoryDescription());
+            category.setCategoryName(categoryDTO.getCategoryName());
+            categoryRepository.save(category);
+        }catch(Exception e){
+            log.error("Error in updateCategory method" +e.getMessage());
+            throw e;
+        }
+    }
 }
