@@ -28,7 +28,7 @@ public class CategoryController {
     @GetMapping
     public CommonResponse getAllCategories() {
         List<CategoryDTO> categoryList = categoryService.getAllCategories();
-        return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE);
+        return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryList);
     }
 
 }
