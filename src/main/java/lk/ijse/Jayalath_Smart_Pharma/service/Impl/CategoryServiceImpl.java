@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -47,6 +48,25 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryDTOS;
         }catch(Exception e){
             log.error("Error in getAllCategories method" +e.getMessage());
+            throw e;
+        }
+    }
+    @Override
+    public CategoryDTO getCategoryById(long categoryId) {
+        log.info("Executing getCategoryById method");
+        try{
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if(!optionalCategory.isPresent()){
+                throw new RuntimeException("Category not found");
+            }
+            Category category = optionalCategory.get();
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setCategoryId(category.getCategoryId());
+            categoryDTO.setCategoryName(category.getCategoryName());
+            categoryDTO.setCategoryDescription(category.getCategoryDescription());
+            return categoryDTO;
+        }catch(Exception e){
+            log.error("Error in getCategoryById method" +e.getMessage());
             throw e;
         }
     }

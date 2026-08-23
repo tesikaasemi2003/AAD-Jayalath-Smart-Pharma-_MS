@@ -30,5 +30,9 @@ public class CategoryController {
         List<CategoryDTO> categoryList = categoryService.getAllCategories();
         return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryList);
     }
-
+    @GetMapping("/{categoryId}")
+    public CommonResponse getCategoryById(@PathVariable Long categoryId) {
+        CategoryDTO categoryDTO = categoryService.getCategoryById(categoryId);
+        return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryDTO);
+    }
 }
