@@ -35,4 +35,9 @@ public class CategoryController {
         CategoryDTO categoryDTO = categoryService.getCategoryById(categoryId);
         return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryDTO);
     }
+    @DeleteMapping
+    public CommonResponse deleteCategoryById(@RequestParam Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
+    }
 }
