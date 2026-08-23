@@ -40,4 +40,9 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
     }
+    @PutMapping("/{categoryId")
+    public CommonResponse updateCategory(@PathVariable Long categoryId,@RequestBody CategoryDTO categoryDTO) {
+        categoryService.updateCategory(categoryId,categoryDTO);
+        return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
+    }
 }

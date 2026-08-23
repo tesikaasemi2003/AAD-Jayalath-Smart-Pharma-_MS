@@ -88,7 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
     @Override
     @Transactional
-    public void updateCategory(CategoryDTO categoryDTO) {
+    public void updateCategory( Long categoryId, CategoryDTO categoryDTO) {
         log.info("Executing updateCategory method");
         try{
             Optional<Category> optionalCategory = categoryRepository.findById(categoryDTO.getCategoryId());
