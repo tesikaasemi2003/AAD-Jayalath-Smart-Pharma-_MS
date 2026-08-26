@@ -8,6 +8,9 @@ import lk.ijse.Jayalath_Smart_Pharma.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -29,6 +32,27 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }catch(Exception e){
             log.error("Error in saving User" + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        log.info("Executing getAllUsers method");
+        try{
+            List<User> users = userRepository.findAll();
+            List<UserDTO> userDTOs = new ArrayList<>();
+            for (User user : users) {
+                UserDTO userDTO = new UserDTO();
+                userDTO.setUserId(user.getUserId());
+                userDTO.setFullName(user.getFullName());
+                userDTO.setEmail(user.getEmail());
+                userDTOs.add(userDTO);
+
+            }
+            return userDTOs;
+        }catch(Exception e){
+            log.error("Error in getAllUsers " + e.getMessage());
             throw e;
         }
     }
