@@ -19,13 +19,13 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PostMapping
+    @PostMapping("/saveRoles")
     public CommonResponse saveRole(@RequestBody RoleDTO roleDTO) {
         roleService.saveRole(roleDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 
-    @GetMapping
+    @GetMapping("/getAllRoles")
     public CommonResponse getAllRoles() {
         List<RoleDTO> roleList = roleService.getAllRoles();
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, roleList);

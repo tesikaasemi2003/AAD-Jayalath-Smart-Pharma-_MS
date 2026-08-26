@@ -20,12 +20,12 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping
+    @PostMapping("/saveCategories")
     public CommonResponse saveCategory(@RequestBody CategoryDTO categoryDTO) {
         categoryService.saveCategory(categoryDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
-    @GetMapping
+    @GetMapping("/getAllCategories")
     public CommonResponse getAllCategories() {
         List<CategoryDTO> categoryList = categoryService.getAllCategories();
         return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryList);
@@ -35,7 +35,7 @@ public class CategoryController {
         CategoryDTO categoryDTO = categoryService.getCategoryById(categoryId);
         return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryDTO);
     }
-    @DeleteMapping
+    @DeleteMapping("/deleteCategories")
     public CommonResponse deleteCategoryById(@RequestParam Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
