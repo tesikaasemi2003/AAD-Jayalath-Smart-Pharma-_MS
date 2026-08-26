@@ -8,4 +8,5 @@ public interface UserService {
     public void saveUser(UserDTO userDTO);
     public List<UserDTO> getAllUsers();
     public UserDTO getUserById(long userId);
+    public void updateUser( Long userId,UserDTO userDTO);
 }

@@ -35,4 +35,10 @@ public class UserController {
         UserDTO userDTO = userService.getUserById(userId);
         return new CommonResponse(OPERATION_SUCCESS , SUCCESS_MESSAGE, userDTO);
     }
+
+    @PutMapping("/{userId}")
+    public CommonResponse updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        userService.updateUser(id, userDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }
