@@ -41,4 +41,10 @@ public class UserController {
         userService.updateUser(id, userDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
+
+    @DeleteMapping("/{userId}")
+    public CommonResponse deleteUser(@PathVariable long userId) {
+        userService.deleteUser(userId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }
