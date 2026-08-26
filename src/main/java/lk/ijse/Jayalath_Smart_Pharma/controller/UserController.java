@@ -29,4 +29,10 @@ public class UserController {
         List<UserDTO> userList = userService.getAllUsers();
         return new CommonResponse(OPERATION_SUCCESS , SUCCESS_MESSAGE, userList);
     }
+
+    @GetMapping("/{userId}")
+    public CommonResponse getUserById(@PathVariable long userId) {
+        UserDTO userDTO = userService.getUserById(userId);
+        return new CommonResponse(OPERATION_SUCCESS , SUCCESS_MESSAGE, userDTO);
+    }
 }
