@@ -98,5 +98,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
+    @Override
+    @Transactional
+    public void deleteUser(long userId) {
+        log.info("Executing deleteUser method");
+        try{
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if(!optionalUser.isPresent()){
+                throw new RuntimeException("User not found");
+            }
+            userRepository.delete(optionalUser.get());
+        } catch (Exception e) {
+            log.error("Error in deleting User" + e.getMessage());
+            throw e;
+        }
+    }
 }

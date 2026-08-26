@@ -9,4 +9,5 @@ public interface UserService {
     public List<UserDTO> getAllUsers();
     public UserDTO getUserById(long userId);
     public void updateUser( Long userId,UserDTO userDTO);
+    public void deleteUser(long userId);
 }
