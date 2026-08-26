@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -48,11 +49,30 @@ public class UserServiceImpl implements UserService {
                 userDTO.setFullName(user.getFullName());
                 userDTO.setEmail(user.getEmail());
                 userDTOs.add(userDTO);
-
             }
             return userDTOs;
         }catch(Exception e){
             log.error("Error in getAllUsers " + e.getMessage());
+            throw e;
+        }
+    }
+    @Override
+    public UserDTO getUserById(long userId) {
+        log.info("Executing getUserById method");
+        try{
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if(!optionalUser.isPresent()){
+                throw new RuntimeException("User not found");
+            }
+            User  user = optionalUser.get();
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setFullName(user.getFullName());
+            userDTO.setEmail(user.getEmail());
+            return userDTO;
+
+        }catch(Exception e){
+            log.error("Error in getUserById " + e.getMessage());
             throw e;
         }
     }
