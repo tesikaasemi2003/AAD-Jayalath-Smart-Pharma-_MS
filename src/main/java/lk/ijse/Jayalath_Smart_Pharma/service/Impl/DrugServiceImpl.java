@@ -10,6 +10,8 @@ import lk.ijse.Jayalath_Smart_Pharma.service.DrugService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,4 +48,30 @@ public class DrugServiceImpl implements DrugService {
             throw e;
         }
     }
-}
+    @Override
+    public List<DrugDTO> getAllDrugs() {
+        log.info("Executing getAllDrugs method");
+        try{
+            List<Drug> drugs = drugRepository.findAll();
+            List<DrugDTO> drugDTOs = new ArrayList<>();
+            for (Drug drug : drugs) {
+                DrugDTO dto = new DrugDTO();
+                dto.setDrugId(drug.getDrugId());
+                dto.setBrandName(drug.getBrandName());
+                dto.setGenericName(drug.getGenericName());
+                dto.setReorderLevel(drug.getReorderLevel());
+                dto.setUnit(drug.getUnit());
+                if (drug.getCategory() != null) {
+                    dto.setCategoryId(drug.getCategory().getCategoryId());
+                }
+                drugDTOs.add(dto);
+            }
+            return drugDTOs;
+        } catch (Exception e) {
+            log.error("Error in getAllDrugs method: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    }
+

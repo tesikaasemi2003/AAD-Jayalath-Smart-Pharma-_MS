@@ -2,6 +2,9 @@ package lk.ijse.Jayalath_Smart_Pharma.service;
 
 import lk.ijse.Jayalath_Smart_Pharma.dto.DrugDTO;
 
+import java.util.List;
+
 public interface DrugService {
     public void saveDrug(DrugDTO drugDTO);
+    public List<DrugDTO> getAllDrugs();
 }
