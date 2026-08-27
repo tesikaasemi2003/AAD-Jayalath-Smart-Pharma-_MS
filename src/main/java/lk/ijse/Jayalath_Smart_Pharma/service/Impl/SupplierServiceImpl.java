@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 
 import lk.ijse.Jayalath_Smart_Pharma.entity.Supplier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
+
     public SupplierServiceImpl(SupplierRepository supplierRepository) {
         this.supplierRepository = supplierRepository;
     }
@@ -22,7 +26,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Transactional
     public void saveSupplier(SupplierDTO supplierDTO) {
         log.info("Executing saveSupplier method");
-        try{
+        try {
             Supplier supplier = new Supplier();
             supplierDTO.setSupplierName(supplierDTO.getSupplierName());
             supplierDTO.setSupplierContactEmail(supplierDTO.getSupplierContactEmail());
@@ -30,10 +34,32 @@ public class SupplierServiceImpl implements SupplierService {
             supplierDTO.setSupplierPhoneNumber(String.valueOf(supplierDTO.getSupplierPhoneNumber()));
             supplierRepository.save(supplier);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error in saving User" + e.getMessage());
             throw e;
         }
+    }
 
+    @Override
+    public List<SupplierDTO> getAllSuppliers() {
+        log.info("Executing getAllSuppliers method");
+        try {
+            List<Supplier> suppliers = supplierRepository.findAll();
+            List<SupplierDTO> supplierDTOs = new ArrayList<>();
+            for (Supplier supplier : suppliers) {
+                SupplierDTO supplierDTO = new SupplierDTO();
+                supplierDTO.setSupplierId(supplier.getSupplierId());
+                supplierDTO.setSupplierName(supplier.getSupplierName());
+                supplierDTO.setSupplierContactEmail(supplier.getSupplierContactEmail());
+                supplierDTO.setSupplierAddress(supplier.getSupplierAddress());
+                supplierDTO.setSupplierPhoneNumber(supplier.getSupplierPhoneNumber());
+                supplierDTOs.add(supplierDTO);
+            }
+            return supplierDTOs;
+
+        } catch (Exception e) {
+            log.error("Error in getAllSuppliers method: " + e.getMessage());
+            throw e;
+        }
     }
 }
