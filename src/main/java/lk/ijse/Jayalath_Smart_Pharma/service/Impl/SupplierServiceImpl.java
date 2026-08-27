@@ -86,4 +86,27 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
     }
+
+    @Override
+    @Transactional
+    public void updateSupplier(Long supplierId, SupplierDTO supplierDTO) {
+        log.info("Executing updateSupplier method");
+        try {
+            Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
+            if (!optionalSupplier.isPresent()) {
+                throw new RuntimeException("Supplier Not Found");
+            }
+            Supplier supplier = optionalSupplier.get();
+            supplierDTO.setSupplierName(supplier.getSupplierName());
+            supplierDTO.setSupplierContactEmail(supplier.getSupplierContactEmail());
+            supplierDTO.setSupplierAddress(supplier.getSupplierAddress());
+            supplierDTO.setSupplierPhoneNumber(supplier.getSupplierPhoneNumber());
+            supplierRepository.save(supplier);
+
+            supplierRepository.save(supplier);
+        } catch (Exception e) {
+            log.error("Error in updateSupplier method: " + e.getMessage());
+            throw e;
+        }
+    }
 }

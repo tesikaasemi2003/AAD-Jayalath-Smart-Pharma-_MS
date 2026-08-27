@@ -8,4 +8,5 @@ public interface SupplierService {
     public void saveSupplier(SupplierDTO supplierDTO);
     public List<SupplierDTO> getAllSuppliers();
     public SupplierDTO getSupplierById(Long supplierId);
+    public void updateSupplier(Long supplierId, SupplierDTO supplierDTO);
 }
