@@ -43,4 +43,11 @@ public class SupplierController {
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 
+    @DeleteMapping("/{supplierId}")
+    public CommonResponse deleteSupplier(@PathVariable Long supplierId) {
+        supplierService.deleteSupplier(supplierId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+
+
 }
