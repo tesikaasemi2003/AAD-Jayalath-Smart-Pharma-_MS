@@ -7,4 +7,5 @@ import java.util.List;
 public interface SupplierService {
     public void saveSupplier(SupplierDTO supplierDTO);
     public List<SupplierDTO> getAllSuppliers();
+    public SupplierDTO getSupplierById(Long supplierId);
 }
