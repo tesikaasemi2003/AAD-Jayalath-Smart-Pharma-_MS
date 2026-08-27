@@ -36,4 +36,11 @@ public class SupplierController {
         SupplierDTO supplierDTO = supplierService.getSupplierById(supplierId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, supplierDTO);
     }
+
+    @PutMapping("/{supplierId}")
+    public CommonResponse updateSupplier(@PathVariable Long supplierId, @RequestBody SupplierDTO supplierDTO) {
+        supplierService.updateSupplier(supplierId, supplierDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+
 }
