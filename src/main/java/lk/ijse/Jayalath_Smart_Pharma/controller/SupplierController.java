@@ -14,6 +14,7 @@ import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage.SUCCESS_MES
 @RequestMapping("/api/v1/suppliers")
 public class SupplierController {
     private SupplierService supplierService;
+
     public SupplierController(SupplierService supplierService) {
         this.supplierService = supplierService;
     }
@@ -30,5 +31,9 @@ public class SupplierController {
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, supplierList);
     }
 
-
+    @GetMapping("/{supplierId}")
+    public CommonResponse getSupplierById(@PathVariable Long supplierId) {
+        SupplierDTO supplierDTO = supplierService.getSupplierById(supplierId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, supplierDTO);
+    }
 }
