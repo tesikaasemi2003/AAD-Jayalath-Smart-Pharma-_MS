@@ -109,4 +109,20 @@ public class SupplierServiceImpl implements SupplierService {
             throw e;
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteSupplier(Long supplierId) {
+        log.info("Executing deleteSupplier method");
+        try{
+            Optional<Supplier> optionalSupplier = supplierRepository.findById(supplierId);
+            if(!optionalSupplier.isPresent()){
+                throw new RuntimeException("Supplier Not Found");
+            }
+            supplierRepository.deleteById(supplierId);
+        }catch(Exception e){
+            log.error("Error in deleteSupplier method: " + e.getMessage());
+            throw e;
+        }
+    }
 }

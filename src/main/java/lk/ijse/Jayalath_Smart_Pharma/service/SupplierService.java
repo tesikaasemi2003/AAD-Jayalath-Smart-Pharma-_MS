@@ -9,4 +9,5 @@ public interface SupplierService {
     public List<SupplierDTO> getAllSuppliers();
     public SupplierDTO getSupplierById(Long supplierId);
     public void updateSupplier(Long supplierId, SupplierDTO supplierDTO);
+    public void deleteSupplier(Long supplierId);
 }
