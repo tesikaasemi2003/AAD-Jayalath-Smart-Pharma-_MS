@@ -30,19 +30,19 @@ public class UserController {
         return new CommonResponse(OPERATION_SUCCESS , SUCCESS_MESSAGE, userList);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("getUserById/{userId}")
     public CommonResponse getUserById(@PathVariable long userId) {
         UserDTO userDTO = userService.getUserById(userId);
         return new CommonResponse(OPERATION_SUCCESS , SUCCESS_MESSAGE, userDTO);
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("updateUsers/{userId}")
     public CommonResponse updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         userService.updateUser(id, userDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("deleteUsers/{userId}")
     public CommonResponse deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);

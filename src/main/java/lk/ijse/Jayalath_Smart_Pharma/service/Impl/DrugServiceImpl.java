@@ -55,20 +55,44 @@ public class DrugServiceImpl implements DrugService {
             List<Drug> drugs = drugRepository.findAll();
             List<DrugDTO> drugDTOs = new ArrayList<>();
             for (Drug drug : drugs) {
-                DrugDTO dto = new DrugDTO();
-                dto.setDrugId(drug.getDrugId());
-                dto.setBrandName(drug.getBrandName());
-                dto.setGenericName(drug.getGenericName());
-                dto.setReorderLevel(drug.getReorderLevel());
-                dto.setUnit(drug.getUnit());
+                DrugDTO drugDTO = new DrugDTO();
+                drugDTO.setDrugId(drug.getDrugId());
+                drugDTO.setBrandName(drug.getBrandName());
+                drugDTO.setGenericName(drug.getGenericName());
+                drugDTO.setReorderLevel(drug.getReorderLevel());
+                drugDTO.setUnit(drug.getUnit());
                 if (drug.getCategory() != null) {
-                    dto.setCategoryId(drug.getCategory().getCategoryId());
+                    drugDTO.setCategoryId(drug.getCategory().getCategoryId());
                 }
-                drugDTOs.add(dto);
+                drugDTOs.add(drugDTO);
             }
             return drugDTOs;
         } catch (Exception e) {
             log.error("Error in getAllDrugs method: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public DrugDTO getDrugById(Long drugId) {
+        log.info("Executing getDrugById method");
+        try {
+            Optional<Drug> optionalDrug = drugRepository.findById(drugId);
+            if (!optionalDrug.isPresent()) {
+                throw new RuntimeException("");
+            }
+            Drug drug = optionalDrug.get();
+            DrugDTO drugDTO = new DrugDTO();
+            drugDTO.setDrugId(drug.getDrugId());
+            drugDTO.setBrandName(drug.getBrandName());
+            drugDTO.setGenericName(drug.getGenericName());
+            drugDTO.setReorderLevel(drug.getReorderLevel());
+            drugDTO.setUnit(drug.getUnit());
+            if (drug.getCategory() != null) {
+                drugDTO.setCategoryId(drug.getCategory().getCategoryId());
+            }
+            return drugDTO;
+        } catch (Exception e) {
+            log.error("Error in getDrugById method: " + e.getMessage());
             throw e;
         }
     }

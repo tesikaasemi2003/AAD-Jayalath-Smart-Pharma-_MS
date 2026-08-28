@@ -28,4 +28,9 @@ public class DrugController {
         List<DrugDTO> drugList = drugService.getAllDrugs();
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, drugList);
     }
+    @GetMapping("/getDrugById/{drugId}")
+    public CommonResponse getDrugById(@PathVariable Long drugId) {
+        DrugDTO drugDTO = drugService.getDrugById(drugId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, drugDTO);
+    }
 }

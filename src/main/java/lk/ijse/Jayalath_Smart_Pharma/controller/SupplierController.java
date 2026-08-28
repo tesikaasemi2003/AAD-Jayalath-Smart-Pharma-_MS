@@ -31,19 +31,19 @@ public class SupplierController {
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, supplierList);
     }
 
-    @GetMapping("/{supplierId}")
+    @GetMapping("getSupplierById/{supplierId}")
     public CommonResponse getSupplierById(@PathVariable Long supplierId) {
         SupplierDTO supplierDTO = supplierService.getSupplierById(supplierId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, supplierDTO);
     }
 
-    @PutMapping("/{supplierId}")
+    @PutMapping("updateSuppliers/{supplierId}")
     public CommonResponse updateSupplier(@PathVariable Long supplierId, @RequestBody SupplierDTO supplierDTO) {
         supplierService.updateSupplier(supplierId, supplierDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 
-    @DeleteMapping("/{supplierId}")
+    @DeleteMapping("deleteSuppliers/{supplierId}")
     public CommonResponse deleteSupplier(@PathVariable Long supplierId) {
         supplierService.deleteSupplier(supplierId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);

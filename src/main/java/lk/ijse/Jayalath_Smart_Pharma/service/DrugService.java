@@ -7,4 +7,5 @@ import java.util.List;
 public interface DrugService {
     public void saveDrug(DrugDTO drugDTO);
     public List<DrugDTO> getAllDrugs();
+    public DrugDTO getDrugById(Long drugId);
 }
