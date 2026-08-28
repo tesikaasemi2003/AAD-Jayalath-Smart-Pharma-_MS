@@ -17,11 +17,11 @@ import java.time.LocalDate;
 public class DrugBatch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String batchId;
+    private Long batchId;
 
     @Column(unique = true , nullable = false )
     private String batchNumber;
-    @Column(unique = true , nullable = false )
+    @Column( nullable = false )
     private LocalDate manufactureDate;
 
     @Column( nullable = false )

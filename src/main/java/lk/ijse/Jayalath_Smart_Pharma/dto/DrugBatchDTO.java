@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DrugBatchDTO {
-    private String batchId;
+    private long batchId;
     private String batchNumber;
     private LocalDate manufactureDate;
     private LocalDate expiryDate;
@@ -23,5 +23,6 @@ public class DrugBatchDTO {
     private Double discountPercentage;
     private String barcodeString;
     private Drug drug;
-    private Inventory inventory;
+    private Integer quantityOnHand;
+    private Long drugId;
 }
