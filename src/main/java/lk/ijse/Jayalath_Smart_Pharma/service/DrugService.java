@@ -9,4 +9,5 @@ public interface DrugService {
     public List<DrugDTO> getAllDrugs();
     public DrugDTO getDrugById(Long drugId);
     public void updateDrug(Long drugId, DrugDTO drugDTO);
+    public void deleteDrug(Long drugId);
 }

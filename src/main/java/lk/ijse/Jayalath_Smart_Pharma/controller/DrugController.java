@@ -39,4 +39,9 @@ public class DrugController {
         drugService.updateDrug(drugId, drugDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
+    @DeleteMapping("deleteDrugs/{drugId}")
+    public CommonResponse deleteDrug(@PathVariable Long drugId) {
+        drugService.deleteDrug(drugId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }
