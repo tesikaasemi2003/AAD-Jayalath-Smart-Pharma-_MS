@@ -78,7 +78,7 @@ public class DrugServiceImpl implements DrugService {
         try {
             Optional<Drug> optionalDrug = drugRepository.findById(drugId);
             if (!optionalDrug.isPresent()) {
-                throw new RuntimeException("");
+                throw new RuntimeException("User not found in this Id");
             }
             Drug drug = optionalDrug.get();
             DrugDTO drugDTO = new DrugDTO();
@@ -97,5 +97,28 @@ public class DrugServiceImpl implements DrugService {
         }
     }
 
+    public void updateDrug(Long drugId, DrugDTO drugDTO) {
+        log.info("Executing updateDrug method");
+        try {
+            Optional<Drug> optionalDrug = drugRepository.findById(drugId);
+            if (!optionalDrug.isPresent()) {
+                throw new RuntimeException("Drug is Not Found");
+            }
+            Optional<Category> optionalCategory = categoryRepository.findById(drugDTO.getCategoryId());
+            if (!optionalCategory.isPresent()) {
+                throw new RuntimeException("Category Not Found");
+            }
+            Drug drug = optionalDrug.get();
+            drugDTO.setBrandName(drugDTO.getBrandName());
+            drugDTO.setGenericName(drugDTO.getGenericName());
+            drugDTO.setReorderLevel(drugDTO.getReorderLevel());
+            drugDTO.setUnit(drugDTO.getUnit());
+            drugDTO.setCategory(optionalCategory.get());
+            drugRepository.save(drug);
+        } catch (Exception e) {
+            log.error("Error in updateDrug method: " + e.getMessage());
+            throw e;
+        }
+    }
     }
 
