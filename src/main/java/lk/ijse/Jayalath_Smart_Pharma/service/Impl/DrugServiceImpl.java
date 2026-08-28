@@ -121,5 +121,21 @@ public class DrugServiceImpl implements DrugService {
             throw e;
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteDrug(Long drugId) {
+        log.info("Executing deleteDrug method");
+        try {
+            Optional<Drug> optionalDrug = drugRepository.findById(drugId);
+            if (!optionalDrug.isPresent()) {
+                throw new RuntimeException("Drug is Not Found");
+            }
+            drugRepository.deleteById(drugId);
+        } catch (Exception e) {
+            log.error("Error in deleteDrug method: " + e.getMessage());
+            throw e;
+        }
+    }
     }
 
