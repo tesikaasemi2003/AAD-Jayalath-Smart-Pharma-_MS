@@ -8,4 +8,5 @@ public interface DrugService {
     public void saveDrug(DrugDTO drugDTO);
     public List<DrugDTO> getAllDrugs();
     public DrugDTO getDrugById(Long drugId);
+    public void updateDrug(Long drugId, DrugDTO drugDTO);
 }

@@ -96,7 +96,8 @@ public class DrugServiceImpl implements DrugService {
             throw e;
         }
     }
-
+    @Override
+    @Transactional
     public void updateDrug(Long drugId, DrugDTO drugDTO) {
         log.info("Executing updateDrug method");
         try {

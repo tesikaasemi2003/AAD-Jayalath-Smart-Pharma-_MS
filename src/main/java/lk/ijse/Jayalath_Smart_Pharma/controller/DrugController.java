@@ -33,4 +33,10 @@ public class DrugController {
         DrugDTO drugDTO = drugService.getDrugById(drugId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, drugDTO);
     }
+
+    @PutMapping("updateDrugs/{drugId}")
+    public CommonResponse updateDrug(@PathVariable Long drugId, @RequestBody DrugDTO drugDTO) {
+        drugService.updateDrug(drugId, drugDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }
