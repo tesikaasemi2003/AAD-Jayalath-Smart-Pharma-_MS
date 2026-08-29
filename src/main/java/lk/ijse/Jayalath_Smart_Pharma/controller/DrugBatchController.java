@@ -3,10 +3,9 @@ package lk.ijse.Jayalath_Smart_Pharma.controller;
 import lk.ijse.Jayalath_Smart_Pharma.constant.CommonResponse;
 import lk.ijse.Jayalath_Smart_Pharma.dto.DrugBatchDTO;
 import lk.ijse.Jayalath_Smart_Pharma.service.DrugBatchService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseCode.OPERATION_SUCCESS;
 import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage.SUCCESS_MESSAGE;
@@ -20,9 +19,26 @@ public class DrugBatchController {
          this.drugBatchService = drugBatchService;
      }
 
-    @PostMapping
+    @PostMapping("/saveDrugBatchs")
     public CommonResponse saveDrugBatch(@RequestBody DrugBatchDTO drugBatchDTO) {
         drugBatchService.saveDrugBatch(drugBatchDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+    @GetMapping
+    public CommonResponse getAllDrugBatches() {
+        List<DrugBatchDTO> batchList = drugBatchService.getAllDrugBatches();
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, batchList);
+    }
+
+    @GetMapping("getDrugBatchByIDs/{batchId}")
+    public CommonResponse getDrugBatchById(@PathVariable Long batchId) {
+        DrugBatchDTO drugBatchDTO = drugBatchService.getDrugBatchById(batchId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, drugBatchDTO);
+    }
+
+    @GetMapping("/fefo/{drugId}")
+    public CommonResponse getAvailableBatchesByFEFO(@PathVariable Long drugId) {
+        List<DrugBatchDTO> batchList = drugBatchService.getAvailableBatchesByFEFO(drugId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, batchList);
     }
 }
