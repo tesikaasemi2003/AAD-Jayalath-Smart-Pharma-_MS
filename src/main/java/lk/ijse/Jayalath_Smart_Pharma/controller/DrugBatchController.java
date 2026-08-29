@@ -48,9 +48,15 @@ public class DrugBatchController {
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, batchList);
     }
 
-    @PutMapping("/{batchId}")
+    @PutMapping("updateDrugBatches/{batchId}")
     public CommonResponse updateDrugBatch(@PathVariable Long batchId, @RequestBody DrugBatchDTO drugBatchDTO) {
         drugBatchService.updateDrugBatch(batchId, drugBatchDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+
+    @DeleteMapping("deleteDrugBatches/{batchId}")
+    public CommonResponse deleteDrugBatch(@PathVariable Long batchId) {
+        drugBatchService.deleteDrugBatch(batchId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 }
