@@ -41,4 +41,16 @@ public class DrugBatchController {
         List<DrugBatchDTO> batchList = drugBatchService.getAvailableBatchesByFEFO(drugId);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, batchList);
     }
+
+    @GetMapping("/expiring-risk")
+    public CommonResponse getExpiringBatchesWithinDays(@RequestParam(defaultValue = "30") int days) {
+        List<DrugBatchDTO> batchList = drugBatchService.getExpiringBatchesWithinDays(days);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, batchList);
+    }
+
+    @PutMapping("/{batchId}")
+    public CommonResponse updateDrugBatch(@PathVariable Long batchId, @RequestBody DrugBatchDTO drugBatchDTO) {
+        drugBatchService.updateDrugBatch(batchId, drugBatchDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }
