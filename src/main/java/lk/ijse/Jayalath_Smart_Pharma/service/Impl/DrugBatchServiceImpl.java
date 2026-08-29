@@ -11,6 +11,8 @@ import lk.ijse.Jayalath_Smart_Pharma.service.DrugBatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,4 +61,41 @@ public class DrugBatchServiceImpl implements DrugBatchService {
         }
     }
 
-}
+    @Override
+    public List<DrugBatchDTO> getAllDrugBatches() {
+        log.info("Executing getAllDrugBatches method");
+        try {
+            List<DrugBatch> batches = drugBatchRepository.findAll();
+            List<DrugBatchDTO> dtoList = new ArrayList<>();
+            for (DrugBatch batch : batches) {
+                dtoList.add(convertToDTO(batch));
+            }
+            return dtoList;
+        } catch (Exception e) {
+            log.error("Error in getAllDrugBatches method: " + e.getMessage());
+            throw e;
+        }
+
+        }
+
+    private DrugBatchDTO convertToDTO(DrugBatch batch) {
+    DrugBatchDTO dto = new DrugBatchDTO();
+    dto.setBatchId(batch.getBatchId());
+    dto.setBatchNumber(batch.getBatchNumber());
+    dto.setManufactureDate(batch.getManufactureDate());
+    dto.setExpiryDate(batch.getExpiryDate());
+    dto.setPurchasePrice(batch.getPurchasePrice());
+    dto.setSellingPrice(batch.getSellingPrice());
+    dto.setDiscountPercentage(batch.getDiscountPercentage());
+    dto.setBarcodeString(batch.getBarcodeString());
+
+    if (batch.getDrug() != null) {
+        dto.setDrugId(batch.getDrug().getDrugId());
+    }
+    if (batch.getInventory() != null) {
+        dto.setQuantityOnHand(batch.getInventory().getQuantityOnHand());
+    }
+
+    return dto;
+ }
+ }
