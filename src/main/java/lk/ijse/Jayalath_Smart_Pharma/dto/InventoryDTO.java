@@ -16,5 +16,5 @@ public class InventoryDTO {
     private long inventoryId;
     private int quantityOnHand;
     private LocalDateTime lastUpdate;
-    private DrugBatch drugBatch;
+    private long batchId;
 }
