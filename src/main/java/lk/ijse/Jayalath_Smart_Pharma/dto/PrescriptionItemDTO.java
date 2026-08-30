@@ -14,9 +14,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PrescriptionItemDTO {
     private long presItemId;
-    private Prescription prescription;
-    private Drug drug;
+    private Long prescriptionId;
+    private Long drugId;
     private String dosage;
     private String frequency;
     private int durationDays;
+    private int quantity;
+    private String instructions;
 }

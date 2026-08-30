@@ -28,4 +28,6 @@ public class PrescriptionItem {
         private String dosage;
         private String frequency;
         private int durationDays;
+        private int quantity;
+        private String instructions;
 }

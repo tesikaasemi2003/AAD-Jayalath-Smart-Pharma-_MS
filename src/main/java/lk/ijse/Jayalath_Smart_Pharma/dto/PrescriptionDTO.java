@@ -21,9 +21,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PrescriptionDTO {
     private long prescriptionId;
-    private Doctor doctor;
-    private Patient patient;
-    private LocalDate issueDate;
+    private long patientId;
+    private long doctorId;
+    private LocalDate issuedDate;
     private String remarks;
-    private List<PrescriptionItem> items ;
+    private List<PrescriptionItemDTO> items ;
 }
