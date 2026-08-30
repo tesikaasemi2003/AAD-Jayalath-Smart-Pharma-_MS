@@ -9,4 +9,5 @@ public interface PatientService {
     public List<PatientDTO> getAllPatients();
     public PatientDTO getPatientById(Long patientId);
     public void updatePatient(Long patientId, PatientDTO patientDTO);
+    public void deletePatient(Long patientId);
 }

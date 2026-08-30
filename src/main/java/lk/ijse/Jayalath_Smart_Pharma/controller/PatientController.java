@@ -40,4 +40,10 @@ public class PatientController {
         patientService.updatePatient(patientId, patientDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
+
+    @DeleteMapping("deletePatients/{patientId}")
+    public CommonResponse deletePatient(@PathVariable Long patientId) {
+        patientService.deletePatient(patientId);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
 }

@@ -93,6 +93,22 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deletePatient(Long patientId) {
+        log.info("Executing deletePatient method for ID: {}", patientId);
+        try {
+            Optional<Patient> optionalPatient = patientRepository.findById(patientId);
+            if (optionalPatient.isEmpty()) {
+                throw new RuntimeException("Patient with ID: " + patientId + " not found");
+            }
+            patientRepository.deleteById(patientId);
+        } catch (Exception e) {
+            log.error("Error in deletePatient method: " + e.getMessage());
+            throw e;
+        }
+    }
+
     private PatientDTO convertToDTO(Patient patient) {
         PatientDTO dto = new PatientDTO();
         dto.setPatientId(patient.getPatientId());
