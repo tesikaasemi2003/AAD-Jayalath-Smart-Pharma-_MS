@@ -1,7 +1,6 @@
 package lk.ijse.Jayalath_Smart_Pharma.service.Impl;
 
 import jakarta.transaction.Transactional;
-import lk.ijse.Jayalath_Smart_Pharma.dto.DoctorDTO;
 import lk.ijse.Jayalath_Smart_Pharma.dto.PatientDTO;
 import lk.ijse.Jayalath_Smart_Pharma.entity.Patient;
 import lk.ijse.Jayalath_Smart_Pharma.repository.PatientRepository;
