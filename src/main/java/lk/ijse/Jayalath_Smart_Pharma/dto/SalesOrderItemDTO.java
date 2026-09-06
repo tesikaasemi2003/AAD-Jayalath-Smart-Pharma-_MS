@@ -14,8 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SalesOrderItemDTO {
     private long orderItemId;
-    private SalesOrder salesOrder;
-    private DrugBatch drugBatch;
+    private long orderId;
+    private long batchId;
     private int quantity;
     private double unitPrice;
     private double subTotal;

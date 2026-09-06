@@ -20,12 +20,12 @@ import java.util.List;
 public class SalesOrderDTO {
     private long orderId;
     private String orderNumber;
-    private Patient patient;
-    private User cashier;
+    private long patientId;
+    private long cashierId;
     private LocalDateTime orderDate;
     private double totalAmount;
     private double discountAmount;
     private double netAmount;
     private paymentType paymentType;
-    private List<SalesOrderItem> items;
+    private List<SalesOrderItemDTO> salesOrderItems;
 }

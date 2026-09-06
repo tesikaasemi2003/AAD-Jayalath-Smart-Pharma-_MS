@@ -41,5 +41,5 @@ public class SalesOrder {
     private paymentType paymentType;
 
     @OneToMany(mappedBy = "salesOrder" , cascade = CascadeType.ALL)
-    private List<SalesOrderItem> items;
+    private List<SalesOrderItem> SalesOrderItems;
 }
