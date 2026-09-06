@@ -19,10 +19,10 @@ import java.util.List;
 public class PurchaseOrderDTO {
     private long poId;
     private String poNumber;
-    private Supplier supplier;
+    private long supplierId;
     private status status;
     private LocalDateTime createdDate;
     private LocalDateTime sentDate;
     private double totalCost;
-    private List<PurchaseOrderItem> items;
+    private List<PurchaseOrderItemDTO> items;
 }

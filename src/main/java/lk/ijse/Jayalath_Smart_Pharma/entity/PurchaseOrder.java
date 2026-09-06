@@ -1,6 +1,7 @@
 package lk.ijse.Jayalath_Smart_Pharma.entity;
 
 import jakarta.persistence.*;
+import lk.ijse.Jayalath_Smart_Pharma.dto.PurchaseOrderItemDTO;
 import lk.ijse.Jayalath_Smart_Pharma.enumaration.status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
