@@ -18,15 +18,15 @@ import java.time.LocalDateTime;
 public class AiAnalyticsLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     @Enumerated(EnumType.STRING)
     private analysisType analysisType;
 
     @Column(columnDefinition = "TEXT")
-    private long aiResponsePayload;
+    private String aiResponsePayload;
     private LocalDateTime generatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "triggered_by_user_id ")
+    @JoinColumn(name = "triggered_by_user_id")
     private User triggeredBy;
 }

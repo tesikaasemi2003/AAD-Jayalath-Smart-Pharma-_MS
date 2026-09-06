@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AiAnalyticsLogDTO {
-    private long Id;
+    private long id;
     private analysisType analysisType;
-    private long aiResponsePayload;
+    private String aiResponsePayload;
     private LocalDateTime generatedAt;
-    private User triggeredBy;
+    private long triggeredBy;
 }

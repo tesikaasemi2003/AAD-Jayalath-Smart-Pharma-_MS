@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DashboardMetricsDTO {
-    private Double totalDailySales;
-    private Integer lowStockDrugCount;
-    private Integer expiringBatchesCount;
-    private Integer totalPrescriptionsToday;
+    private double totalSalesToday;
+    private long totalOrdersToday;
+    private long lowStockCount;
+    private long expiringSoonCount;
 }
