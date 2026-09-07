@@ -8,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoogleAuthRequestDTO {
-    private String googleToken;
+    private String idToken;
 }
