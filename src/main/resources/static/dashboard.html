@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart-Pharma Engine · Executive Dashboard</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    keyframes: {
+                        pulseDot: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.35 },
+                        },
+                        floatUp: {
+                            '0%': { opacity: 0, transform: 'translateY(8px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                    },
+                    animation: {
+                        pulseDot: 'pulseDot 2s ease-in-out infinite',
+                        floatUp: 'floatUp 0.5s ease-out both',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .stagger-1 { animation-delay: 60ms; }
+        .stagger-2 { animation-delay: 120ms; }
+        .stagger-3 { animation-delay: 180ms; }
+        .stagger-4 { animation-delay: 240ms; }
+
+        /* Theme toggle */
+        .theme-track { transition: background-color 200ms ease; }
+        .theme-dot { transition: transform 200ms ease; }
+        html.dark .theme-dot { transform: translateX(1.35rem); }
+
+        /* Radial expiry gauge */
+        .gauge-ring { transition: stroke-dashoffset 800ms ease; }
+
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.35); border-radius: 999px; }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-body transition-colors duration-200 min-h-screen">
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-[1400px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-4">
+
+        <!-- Brand -->
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 4h4.5a3.5 3.5 0 0 1 0 7H8v9M8 11l5 9" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="hidden sm:block leading-tight">
+                <p class="font-display font-semibold text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-emerald-500">Engine</span></p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">EXECUTIVE CONSOLE</p>
+            </div>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
+            <a href="#" class="px-3 py-2 rounded-lg text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">Dashboard</a>
+            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Batches</a>
+            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Purchase Orders</a>
+            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Reports</a>
+            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Settings</a>
+        </nav>
+
+        <!-- Right cluster -->
+        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+
+            <!-- Connection indicator -->
+            <div class="hidden md:flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-pulseDot absolute inline-flex h-full w-full rounded-full bg-emerald-500"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+                <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Neon Cloud MySQL Active</span>
+            </div>
+
+            <!-- Role badge -->
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2.5 py-1">
+        <i class="fa-solid fa-user-shield text-[10px]"></i> ADMIN
+      </span>
+
+            <!-- Theme toggle -->
+            <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-11 h-6 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5">
+        <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+          <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
+          <i class="fa-solid fa-moon text-emerald-400 text-[10px] hidden dark:inline"></i>
+        </span>
+            </button>
+
+            <!-- Avatar -->
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-xs font-semibold">JS</div>
+        </div>
+    </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="max-w-[1400px] mx-auto px-5 lg:px-8 py-7 space-y-7">
+
+    <!-- Page heading -->
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+            <h1 class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Executive Overview</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Live inventory, sales &amp; AI pricing intelligence — updated in real time.</p>
+        </div>
+        <p class="text-xs font-mono text-slate-400 dark:text-slate-500" id="lastUpdated">Last sync —</p>
+    </div>
+
+    <!-- ============ KPI CARDS ============ -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+        <!-- Total Batches -->
+        <div class="animate-floatUp stagger-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
+            <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Batches</p>
+                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">1,284</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +4.2% vs last month</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+        </div>
+
+        <!-- FEFO Expiring — Rose accent -->
+        <div class="animate-floatUp stagger-2 bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-500/30 rounded-2xl p-5 flex items-start justify-between relative overflow-hidden hover:border-rose-400/50 transition-colors">
+            <div class="absolute inset-x-0 top-0 h-1 bg-rose-500"></div>
+            <div>
+                <p class="text-xs font-medium text-rose-500 dark:text-rose-400 uppercase tracking-wide">FEFO Risk · 60 Days</p>
+                <p class="font-display text-3xl font-semibold text-rose-600 dark:text-rose-400 mt-2">37</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-hourglass-half"></i> batches expiring soon</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+
+        <!-- Pending Purchase Orders -->
+        <div class="animate-floatUp stagger-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
+            <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Pending Purchase Orders</p>
+                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">12</p>
+                <p class="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-clock"></i> 3 awaiting approval</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-file-invoice"></i>
+            </div>
+        </div>
+
+        <!-- Total Sales Today -->
+        <div class="animate-floatUp stagger-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
+            <div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Sales Today</p>
+                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">Rs. 428,650</p>
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +11.8% vs yesterday</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ AI EXPIRY & DYNAMIC PRICING WIDGET ============ -->
+    <section class="bg-gradient-to-r from-rose-500/[0.07] to-transparent dark:from-rose-500/[0.08] border border-rose-200 dark:border-rose-500/25 rounded-2xl p-5 lg:p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+
+            <!-- Radial expiry gauge -->
+            <div class="flex items-center gap-4 shrink-0">
+                <div class="relative w-20 h-20 shrink-0">
+                    <svg viewBox="0 0 80 80" class="w-20 h-20 -rotate-90">
+                        <circle cx="40" cy="40" r="34" fill="none" stroke-width="7" class="stroke-slate-200 dark:stroke-slate-800" />
+                        <circle id="expiryGaugeRing" cx="40" cy="40" r="34" fill="none" stroke-width="7" stroke-linecap="round"
+                                class="stroke-rose-500 gauge-ring" stroke-dasharray="213.6" stroke-dashoffset="213.6" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="font-display font-bold text-lg text-rose-600 dark:text-rose-400 leading-none">28</span>
+                        <span class="text-[9px] text-slate-400 font-mono mt-0.5">DAYS</span>
+                    </div>
+                </div>
+                <div>
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider text-rose-600 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-full px-2 py-0.5 mb-1.5">
+            <i class="fa-solid fa-bolt"></i> AI EXPIRY ALERT
+          </span>
+                    <p class="font-display font-semibold text-slate-900 dark:text-slate-50">Batch #B102 · Amoxicillin 500mg</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">840 units on hand · expires in <span class="font-semibold text-rose-500">28 days</span> · FEFO priority</p>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="hidden lg:block w-px h-14 bg-rose-200 dark:bg-rose-500/20"></div>
+
+            <!-- Recommendation + action -->
+            <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
+                <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">
+                    <i class="fa-solid fa-robot text-emerald-500 mr-1.5"></i>
+                    Model recommends a <span class="font-semibold text-slate-900 dark:text-slate-100">20% dynamic discount</span> to accelerate sell-through before expiry and reduce projected write-off of <span class="font-semibold text-rose-500">Rs. 58,400</span>.
+                </p>
+                <button id="applyDiscountBtn"
+                        class="shrink-0 inline-flex items-center justify-center gap-2 bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-rose-500/20 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <i id="discountBtnIcon" class="fa-solid fa-tag"></i>
+                    <span id="discountBtnLabel">Apply 20% Dynamic Discount</span>
+                </button>
+            </div>
+        </div>
+        <p id="discountStatus" class="hidden mt-4 text-sm rounded-lg px-3 py-2 border"></p>
+    </section>
+
+    <!-- ============ ANALYTICS: CHARTS ============ -->
+    <section class="grid grid-cols-1 xl:grid-cols-5 gap-5">
+
+        <!-- Line chart -->
+        <div class="xl:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 lg:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50">Sales Demand Forecast vs Actual</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Last 7 days · units sold</p>
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Actual</span>
+                    <span class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-400 dark:bg-slate-600"></span>Forecast</span>
+                </div>
+            </div>
+            <div class="h-72"><canvas id="forecastChart"></canvas></div>
+        </div>
+
+        <!-- Donut chart -->
+        <div class="xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 lg:p-6">
+            <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50">Stock Expiry Distribution</h2>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 mb-4">By risk window</p>
+            <div class="h-64 flex items-center justify-center"><canvas id="expiryDonutChart"></canvas></div>
+        </div>
+    </section>
+
+    <!-- ============ TABLES ============ -->
+    <section class="grid grid-cols-1 xl:grid-cols-5 gap-5 pb-4">
+
+        <!-- Top 5 Best-Selling Medicines -->
+        <div class="xl:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div class="px-5 lg:px-6 pt-5 lg:pt-6 pb-4 flex items-center justify-between">
+                <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50">Top 5 Best-Selling Medicines</h2>
+                <span class="text-xs text-slate-400 font-mono">THIS MONTH</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                    <tr class="text-left text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide border-y border-slate-100 dark:border-slate-800">
+                        <th class="px-5 lg:px-6 py-2.5 font-medium">Medicine</th>
+                        <th class="px-3 py-2.5 font-medium">Units Sold</th>
+                        <th class="px-3 py-2.5 font-medium">Revenue</th>
+                        <th class="px-3 py-2.5 font-medium">Trend</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="px-5 lg:px-6 py-3 font-medium text-slate-800 dark:text-slate-100">Paracetamol 500mg</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">12,480</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">Rs. 748,000</td>
+                        <td class="px-3 py-3 text-emerald-500"><i class="fa-solid fa-arrow-trend-up"></i> 8.4%</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="px-5 lg:px-6 py-3 font-medium text-slate-800 dark:text-slate-100">Amoxicillin 500mg</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">9,120</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">Rs. 638,400</td>
+                        <td class="px-3 py-3 text-emerald-500"><i class="fa-solid fa-arrow-trend-up"></i> 5.1%</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="px-5 lg:px-6 py-3 font-medium text-slate-800 dark:text-slate-100">Cetirizine 10mg</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">7,860</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">Rs. 314,400</td>
+                        <td class="px-3 py-3 text-rose-500"><i class="fa-solid fa-arrow-trend-down"></i> 1.8%</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="px-5 lg:px-6 py-3 font-medium text-slate-800 dark:text-slate-100">Omeprazole 20mg</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">6,540</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">Rs. 392,400</td>
+                        <td class="px-3 py-3 text-emerald-500"><i class="fa-solid fa-arrow-trend-up"></i> 3.2%</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="px-5 lg:px-6 py-3 font-medium text-slate-800 dark:text-slate-100">Metformin 500mg</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">5,910</td>
+                        <td class="px-3 py-3 text-slate-500 dark:text-slate-400">Rs. 265,950</td>
+                        <td class="px-3 py-3 text-emerald-500"><i class="fa-solid fa-arrow-trend-up"></i> 6.7%</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- AI Dynamic Pricing Audit Log -->
+        <div class="xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+            <div class="px-5 lg:px-6 pt-5 lg:pt-6 pb-4 flex items-center justify-between">
+                <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50">AI Dynamic Pricing Audit Log</h2>
+                <i class="fa-solid fa-clock-rotate-left text-slate-300 dark:text-slate-600"></i>
+            </div>
+            <ul id="auditLog" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm flex-1">
+                <li class="px-5 lg:px-6 py-3 flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                    <div>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B098</span> — 15% discount applied</p>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">Today, 09:14 · by AI Engine</p>
+                    </div>
+                </li>
+                <li class="px-5 lg:px-6 py-3 flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                    <div>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B091</span> — 10% discount applied</p>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">Yesterday, 17:42 · by AI Engine</p>
+                    </div>
+                </li>
+                <li class="px-5 lg:px-6 py-3 flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-clock text-xs"></i></span>
+                    <div>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B084</span> — flagged for review</p>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">Yesterday, 11:05 · by AI Engine</p>
+                    </div>
+                </li>
+                <li class="px-5 lg:px-6 py-3 flex items-start gap-3">
+                    <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                    <div>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B076</span> — 25% discount applied</p>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">2 days ago, 08:30 · by AI Engine</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<script>
+    const API_BASE = 'http://localhost:8080/api/v1';
+
+    /* ============ 1. AUTH GUARD & USER INITIALIZATION ============ */
+    const token = localStorage.getItem('jwtToken');
+    const userRole = localStorage.getItem('userRole') || 'USER';
+    const userEmail = localStorage.getItem('userEmail') || '';
+    const userFullName = localStorage.getItem('userFullName') || 'User';
+
+    // Login වී නැත්නම් කෙළින්ම Login Page එකට Redirect කරයි
+    if (!token) {
+        window.location.href = 'login.html';
+    }
+
+    // Header UI එක Dynamic ලෙස Update කිරීම
+    document.addEventListener('DOMContentLoaded', () => {
+        const roleBadge = document.querySelector('header .fa-user-shield')?.parentElement;
+        if (roleBadge) {
+            roleBadge.innerHTML = `<i class="fa-solid fa-user-shield text-[10px]"></i> ${userRole}`;
+        }
+
+        const avatar = document.querySelector('header .w-8.h-8');
+        if (avatar) {
+            const initials = userFullName ? userFullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US';
+            avatar.textContent = initials;
+            avatar.title = `${userFullName} (${userEmail})`;
+        }
+    });
+
+    /* ============ 2. THEME TOGGLE ============ */
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+
+    function applyTheme(theme) {
+        if (theme === 'dark') root.classList.add('dark');
+        else root.classList.remove('dark');
+        localStorage.setItem('theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('theme')
+        || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        applyTheme(root.classList.contains('dark') ? 'light' : 'dark');
+        renderCharts();
+    });
+
+    /* ============ 3. LAST SYNC TIMESTAMP ============ */
+    document.getElementById('lastUpdated').textContent =
+        'Last sync ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    /* ============ 4. EXPIRY GAUGE ============ */
+    (function drawGauge() {
+        const ring = document.getElementById('expiryGaugeRing');
+        if (!ring) return;
+        const circumference = 2 * Math.PI * 34;
+        const daysRemaining = 28;
+        const riskWindow = 60;
+        const fraction = 1 - Math.min(daysRemaining / riskWindow, 1);
+        const offset = circumference * (1 - fraction);
+        requestAnimationFrame(() => { ring.style.strokeDashoffset = offset; });
+    })();
+
+    /* ============ 5. APPLY DYNAMIC DISCOUNT (BACKEND PATCH) ============ */
+    const applyBtn = document.getElementById('applyDiscountBtn');
+    const btnLabel = document.getElementById('discountBtnLabel');
+    const btnIcon  = document.getElementById('discountBtnIcon');
+    const statusEl = document.getElementById('discountStatus');
+
+    applyBtn?.addEventListener('click', async () => {
+        applyBtn.disabled = true;
+        btnIcon.className = 'fa-solid fa-spinner fa-spin';
+        btnLabel.textContent = 'Applying discount…';
+        statusEl.classList.add('hidden');
+
+        try {
+            const res = await fetch(`${API_BASE}/batches/102/apply-discount`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ discountPercent: 20 }),
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                localStorage.clear();
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || `Request failed (HTTP ${res.status})`);
+
+            statusEl.textContent = `✓ 20% dynamic discount applied to Batch #B102. New price effective immediately.`;
+            statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30';
+            statusEl.classList.remove('hidden');
+
+            btnIcon.className = 'fa-solid fa-check';
+            btnLabel.textContent = 'Discount Applied';
+
+            const log = document.getElementById('auditLog');
+            if (log) {
+                const item = document.createElement('li');
+                item.className = 'px-5 lg:px-6 py-3 flex items-start gap-3';
+                item.innerHTML = `
+          <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+          <div>
+            <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B102</span> — 20% discount applied</p>
+            <p class="text-xs text-slate-400 font-mono mt-0.5">Just now · by AI Engine</p>
+          </div>`;
+                log.prepend(item);
+            }
+
+        } catch (err) {
+            statusEl.textContent = `✕ Failed to apply discount: ${err.message}`;
+            statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-rose-700 dark:text-rose-300 bg-rose-500/10 border-rose-500/30';
+            statusEl.classList.remove('hidden');
+            applyBtn.disabled = false;
+            btnIcon.className = 'fa-solid fa-tag';
+            btnLabel.textContent = 'Apply 20% Dynamic Discount';
+        }
+    });
+
+    /* ============ 6. CHARTS RENDER ============ */
+    let forecastChartInstance = null;
+    let donutChartInstance = null;
+
+    function chartTheme() {
+        const isDark = root.classList.contains('dark');
+        return {
+            grid: isDark ? 'rgba(148,163,184,0.12)' : 'rgba(100,116,139,0.12)',
+            tick: isDark ? '#94a3b8' : '#64748b',
+            cardBg: isDark ? '#0f172a' : '#ffffff',
+        };
+    }
+
+    function renderCharts() {
+        const t = chartTheme();
+
+        const forecastEl = document.getElementById('forecastChart');
+        if (forecastEl) {
+            const lineCtx = forecastEl.getContext('2d');
+            if (forecastChartInstance) forecastChartInstance.destroy();
+            forecastChartInstance = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Actual',
+                            data: [820, 932, 901, 1034, 1120, 1290, 1180],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16,185,129,0.12)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#10b981',
+                        },
+                        {
+                            label: 'Forecast',
+                            data: [800, 890, 940, 990, 1080, 1200, 1240],
+                            borderColor: t.tick,
+                            borderDash: [5, 5],
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            pointRadius: 0,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: t.grid }, ticks: { color: t.tick, font: { family: 'Inter' } } },
+                        y: { grid: { color: t.grid }, ticks: { color: t.tick, font: { family: 'Inter' } } },
+                    },
+                },
+            });
+        }
+
+        const donutEl = document.getElementById('expiryDonutChart');
+        if (donutEl) {
+            const donutCtx = donutEl.getContext('2d');
+            if (donutChartInstance) donutChartInstance.destroy();
+            donutChartInstance = new Chart(donutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['< 30 days', '30–60 days', '60–90 days', '> 90 days'],
+                    datasets: [{
+                        data: [14, 23, 31, 216],
+                        backgroundColor: ['#f43f5e', '#f59e0b', '#38bdf8', '#10b981'],
+                        borderColor: t.cardBg,
+                        borderWidth: 3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: t.tick, boxWidth: 10, boxHeight: 10, padding: 14, font: { family: 'Inter', size: 11 } },
+                        },
+                    },
+                },
+            });
+        }
+    }
+
+    renderCharts();
+</script>
+</body>
+</html>
