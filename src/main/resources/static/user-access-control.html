@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart-Pharma Engine · User &amp; Access Control</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    keyframes: {
+                        floatUp: { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        modalIn: { '0%': { opacity: 0, transform: 'scale(0.96) translateY(6px)' }, '100%': { opacity: 1, transform: 'scale(1) translateY(0)' } },
+                    },
+                    animation: {
+                        floatUp: 'floatUp 0.4s ease-out both',
+                        modalIn: 'modalIn 0.22s cubic-bezier(0.16,1,0.3,1) both',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .theme-track { transition: background-color 200ms ease; }
+        .theme-dot { transition: transform 200ms ease; }
+        html.dark .theme-dot { transform: translateX(1.35rem); }
+
+        /* Active-status switch */
+        .status-input:checked ~ .status-track { background-color: #14b8a6; }
+        .status-input:checked ~ .status-track .status-dot { transform: translateX(1.15rem); }
+        .status-dot { transition: transform 180ms ease; }
+
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.35); border-radius: 999px; }
+
+        .row-fade { animation: rowIn 0.3s ease-out both; }
+        @keyframes rowIn { from { opacity: 0; background-color: rgba(20,184,166,0.08);} to { opacity: 1; } }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-body transition-colors duration-200 min-h-screen">
+
+<!-- ============ NAVBAR (Sleek & Perfectly Centered) ============ -->
+<header class="sticky top-0 z-40 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- 1. LEFT: LOGO & TITLE -->
+        <div class="flex-1 flex items-center justify-start shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 4h4.5a3.5 3.5 0 0 1 0 7H8v9M8 11l5 9" stroke="#14b8a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="hidden sm:block leading-tight">
+                    <p class="font-display font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-teal-500">Engine</span></p>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono -mt-0.5">ACCESS CONTROL</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CENTER: NAVIGATION LINKS (EXACT MIDDLE OF MIDDLE) -->
+        <nav class="hidden lg:flex items-center justify-center gap-1 text-xs font-medium shrink-0">
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie text-[11px]"></i> Dashboard
+            </a>
+
+            <!-- Access Control (Active State) -->
+            <a href="user-access-control.html" class="px-2.5 py-1 rounded-md text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-user-shield text-[11px]"></i> Access Control
+            </a>
+
+            <!-- Inventory & Stock Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-box-archive text-[11px]"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
+                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
+                </div>
+            </div>
+
+            <!-- Sales & Counter Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-cash-register text-[11px]"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
+                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
+                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 3. RIGHT: THEME TOGGLE / USER PROFILE -->
+        <div class="flex-1 flex items-center justify-end gap-3 shrink-0">
+            <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-10 h-5.5 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5">
+                <span class="theme-dot w-4.5 h-4.5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+                    <i class="fa-solid fa-sun text-amber-400 text-[9px] dark:hidden"></i>
+                    <i class="fa-solid fa-moon text-teal-400 text-[9px] hidden dark:inline"></i>
+                </span>
+            </button>
+        </div>
+
+    </div>
+</header>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="max-w-[1400px] mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+    <!-- ============ PAGE HEADER ============ -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">User &amp; Access Control</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage staff accounts, authentication providers, and role-based permissions.</p>
+        </div>
+        <button id="openCreateModal" class="inline-flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-teal-500/20 shrink-0">
+            <i class="fa-solid fa-user-plus"></i> Register New User
+        </button>
+    </div>
+
+
+
+    <!-- ============ FILTER BAR ============ -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input id="searchInput" type="text" placeholder="Search by name or email…"
+                   class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+        </div>
+        <div class="relative sm:w-56">
+            <i class="fa-solid fa-user-tag absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+            <select id="roleFilter"
+                    class="w-full appearance-none bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-8 py-2.5 text-sm outline-none transition-colors">
+                <option value="">All Roles</option>
+                <option value="ROLE_ADMIN">Admin</option>
+                <option value="ROLE_PHARMACIST">Pharmacist</option>
+                <option value="ROLE_CASHIER">Cashier</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+        </div>
+    </div>
+
+    <!-- ============ USER TABLE ============ -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                <tr class="text-left text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+                    <th class="px-5 lg:px-6 py-3 font-medium">User ID</th>
+                    <th class="px-3 py-3 font-medium">Full Name</th>
+                    <th class="px-3 py-3 font-medium">Email</th>
+                    <th class="px-3 py-3 font-medium">Provider</th>
+                    <th class="px-3 py-3 font-medium">Roles</th>
+                    <th class="px-3 py-3 font-medium">Active</th>
+                    <th class="px-3 py-3 font-medium text-right pr-5 lg:pr-6">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="userTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+        </div>
+        <p id="emptyState" class="hidden text-center text-sm text-slate-400 py-10">
+            <i class="fa-solid fa-user-slash text-lg mb-2 block"></i> No users match your search.
+        </p>
+    </div>
+</main>
+
+<!-- ============ CREATE / EDIT USER MODAL ============ -->
+<div id="userModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="modalOverlay" class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl animate-modalIn max-h-[90vh] overflow-y-auto">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center">
+                    <i id="modalHeaderIcon" class="fa-solid fa-user-plus text-sm"></i>
+                </div>
+                <h2 id="modalTitle" class="font-display font-semibold text-lg text-slate-900 dark:text-slate-50">Register New User</h2>
+            </div>
+            <button id="closeModalBtn" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Modal form -->
+        <form id="userForm" class="px-6 py-5 space-y-5">
+            <input type="hidden" id="userIdField" value="" />
+
+            <!-- Full name -->
+            <div>
+                <label for="fullName" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Full Name</label>
+                <input type="text" id="fullName" required placeholder="e.g. Nadeesha Perera"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="userEmail" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Email</label>
+                <input type="email" id="userEmail" required placeholder="name@smartpharma.lk"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <!-- Provider + Password -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="authProvider" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Auth Provider</label>
+                    <div class="relative">
+                        <select id="authProvider"
+                                class="w-full appearance-none bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-3.5 pr-8 py-2.5 text-sm outline-none transition-colors">
+                            <option value="LOCAL">Local</option>
+                            <option value="GOOGLE">Google</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+                <div>
+                    <label for="userPassword" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                        Password <span id="passwordHint" class="text-slate-400 font-normal">(required)</span>
+                    </label>
+                    <input type="password" id="userPassword" placeholder="••••••••"
+                           class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+            </div>
+            <p id="googleNote" class="hidden -mt-3 text-xs text-teal-600 dark:text-teal-400 flex items-center gap-1.5">
+                <i class="fa-brands fa-google"></i> Password is not required — Google handles authentication for this account.
+            </p>
+
+            <!-- Active toggle -->
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg px-3.5 py-3">
+                <div>
+                    <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Account Active</p>
+                    <p class="text-xs text-slate-400">Inactive accounts cannot sign in</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer select-none">
+                    <input type="checkbox" id="activeToggle" checked class="status-input sr-only peer">
+                    <span class="status-track w-10 h-5.5 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition-colors relative w-11 h-6">
+            <span class="status-dot absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow"></span>
+          </span>
+                </label>
+            </div>
+
+            <!-- Role multi-select -->
+            <div>
+                <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Assigned Roles</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <label class="role-checkbox flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 cursor-pointer hover:border-teal-400/60 has-[:checked]:border-teal-500 has-[:checked]:bg-teal-500/5 transition-colors">
+                        <input type="checkbox" value="ROLE_ADMIN" class="role-input accent-teal-500 w-4 h-4">
+                        <span class="text-sm text-slate-700 dark:text-slate-200">Admin</span>
+                    </label>
+                    <label class="role-checkbox flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 cursor-pointer hover:border-teal-400/60 has-[:checked]:border-teal-500 has-[:checked]:bg-teal-500/5 transition-colors">
+                        <input type="checkbox" value="ROLE_PHARMACIST" class="role-input accent-teal-500 w-4 h-4">
+                        <span class="text-sm text-slate-700 dark:text-slate-200">Pharmacist</span>
+                    </label>
+                    <label class="role-checkbox flex items-center gap-2.5 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2.5 cursor-pointer hover:border-teal-400/60 has-[:checked]:border-teal-500 has-[:checked]:bg-teal-500/5 transition-colors">
+                        <input type="checkbox" value="ROLE_CASHIER" class="role-input accent-teal-500 w-4 h-4">
+                        <span class="text-sm text-slate-700 dark:text-slate-200">Cashier</span>
+                    </label>
+                </div>
+                <p id="roleError" class="hidden text-xs text-rose-500 mt-1.5">Select at least one role.</p>
+            </div>
+
+            <p id="formError" class="hidden text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2"></p>
+
+            <!-- Footer actions -->
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button" id="cancelModalBtn" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 px-4 py-2.5 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" id="submitUserBtn" class="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-5 py-2.5 transition-colors shadow-lg shadow-teal-500/20 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <span id="submitUserLabel">Create User</span>
+                    <i id="submitUserSpinner" class="hidden fa-solid fa-spinner fa-spin"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* ============ THEME TOGGLE ============ */
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    function applyTheme(theme) {
+        if (theme === 'dark') root.classList.add('dark'); else root.classList.remove('dark');
+        localStorage.setItem('theme', theme);
+    }
+    applyTheme(localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    themeToggle.addEventListener('click', () => applyTheme(root.classList.contains('dark') ? 'light' : 'dark'));
+
+    /* ============ CONFIG ============ */
+    const API_BASE = 'http://localhost:8080/api/v1/users';
+    const authHeaders = () => ({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('jwtToken') || ''}`,
+    });
+
+    const ROLE_META = {
+        ROLE_ADMIN:      { label: 'Admin',      cls: 'bg-violet-500/10 text-violet-600 dark:text-violet-300 border-violet-500/30' },
+        ROLE_PHARMACIST: { label: 'Pharmacist', cls: 'bg-teal-500/10 text-teal-600 dark:text-teal-300 border-teal-500/30' },
+        ROLE_CASHIER:    { label: 'Cashier',    cls: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border-cyan-500/30' },
+    };
+
+    /* ============ SEED DATA ============ */
+    let users = [
+        { id: 'U-1001', fullName: 'Nadeesha Perera', email: 'nadeesha.perera@smartpharma.lk', provider: 'LOCAL',  active: true,  roles: ['ROLE_ADMIN'] },
+        { id: 'U-1002', fullName: 'Kasun Jayalath',   email: 'kasun.jayalath@smartpharma.lk',  provider: 'GOOGLE', active: true,  roles: ['ROLE_PHARMACIST'] },
+        { id: 'U-1003', fullName: 'Ishara Fernando',  email: 'ishara.fernando@smartpharma.lk', provider: 'LOCAL',  active: true,  roles: ['ROLE_CASHIER'] },
+        { id: 'U-1004', fullName: 'Dilshan Wickrama', email: 'dilshan.w@smartpharma.lk',       provider: 'LOCAL',  active: false, roles: ['ROLE_PHARMACIST', 'ROLE_CASHIER'] },
+        { id: 'U-1005', fullName: 'Tharushi Silva',   email: 'tharushi.silva@smartpharma.lk',  provider: 'GOOGLE', active: true,  roles: ['ROLE_ADMIN', 'ROLE_PHARMACIST'] },
+    ];
+
+    const tbody       = document.getElementById('userTableBody');
+    const emptyState  = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+    const roleFilter  = document.getElementById('roleFilter');
+
+    function providerBadge(provider) {
+        if (provider === 'GOOGLE') {
+            return `<span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1">
+                <i class="fa-brands fa-google text-[#EA4335]"></i> GOOGLE
+              </span>`;
+        }
+        return `<span class="inline-flex items-center gap-1.5 text-xs font-medium text-teal-700 dark:text-teal-300 bg-teal-500/10 border border-teal-500/30 rounded-full px-2.5 py-1">
+              <i class="fa-solid fa-key"></i> LOCAL
+            </span>`;
+    }
+
+    function roleBadges(roles) {
+        return roles.map(r => {
+            const meta = ROLE_META[r] || { label: r, cls: 'bg-slate-500/10 text-slate-500 border-slate-500/30' };
+            return `<span class="inline-block text-[11px] font-mono font-medium border rounded-full px-2 py-0.5 mr-1 mb-1 ${meta.cls}">${r}</span>`;
+        }).join('');
+    }
+
+    function renderTable() {
+        const q = searchInput.value.trim().toLowerCase();
+        const roleQ = roleFilter.value;
+
+        const filtered = users.filter(u => {
+            const matchesSearch = !q || u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+            const matchesRole = !roleQ || u.roles.includes(roleQ);
+            return matchesSearch && matchesRole;
+        });
+
+        emptyState.classList.toggle('hidden', filtered.length !== 0);
+        tbody.innerHTML = filtered.map(u => `
+      <tr class="row-fade hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" data-id="${u.id}">
+        <td class="px-5 lg:px-6 py-3.5 font-mono text-xs text-slate-400">${u.id}</td>
+        <td class="px-3 py-3.5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center text-white text-[11px] font-semibold shrink-0">
+              ${u.fullName.split(' ').map(n => n[0]).slice(0,2).join('')}
+            </div>
+            <span class="font-medium text-slate-800 dark:text-slate-100">${u.fullName}</span>
+          </div>
+        </td>
+        <td class="px-3 py-3.5 text-slate-500 dark:text-slate-400">${u.email}</td>
+        <td class="px-3 py-3.5">${providerBadge(u.provider)}</td>
+        <td class="px-3 py-3.5 max-w-[220px]">${roleBadges(u.roles)}</td>
+        <td class="px-3 py-3.5">
+          <label class="relative inline-flex items-center cursor-pointer select-none">
+            <input type="checkbox" class="status-input sr-only peer active-toggle" data-id="${u.id}" ${u.active ? 'checked' : ''}>
+            <span class="status-track w-10 h-5.5 bg-slate-300 dark:bg-slate-600 rounded-full transition-colors relative w-11 h-6">
+              <span class="status-dot absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow"></span>
+            </span>
+          </label>
+        </td>
+        <td class="px-3 py-3.5 text-right pr-5 lg:pr-6">
+          <button class="edit-btn w-8 h-8 rounded-lg text-slate-400 hover:text-teal-500 hover:bg-teal-500/10 transition-colors" data-id="${u.id}" title="Edit user">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="delete-btn w-8 h-8 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" data-id="${u.id}" title="Delete user">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+    }
+
+    searchInput.addEventListener('input', renderTable);
+    roleFilter.addEventListener('change', renderTable);
+    renderTable();
+
+    /* ============ ACTIVE STATUS TOGGLE (event delegation) ============ */
+    tbody.addEventListener('change', async (e) => {
+        if (!e.target.classList.contains('active-toggle')) return;
+        const id = e.target.dataset.id;
+        const user = users.find(u => u.id === id);
+        const newStatus = e.target.checked;
+        const previous = user.active;
+        user.active = newStatus; // optimistic update
+
+        try {
+            const res = await fetch(`${API_BASE}/${id}/status`, {
+                method: 'PATCH',
+                headers: authHeaders(),
+                body: JSON.stringify({ active: newStatus }),
+            });
+            if (!res.ok) throw new Error('Status update failed');
+        } catch (err) {
+            user.active = previous; // rollback
+            e.target.checked = previous;
+            console.error(err.message);
+        }
+    });
+
+    /* ============ DELETE (event delegation) ============ */
+    tbody.addEventListener('click', async (e) => {
+        const delBtn = e.target.closest('.delete-btn');
+        const editBtn = e.target.closest('.edit-btn');
+
+        if (delBtn) {
+            const id = delBtn.dataset.id;
+            const user = users.find(u => u.id === id);
+            if (!confirm(`Remove ${user.fullName} from Smart-Pharma Engine? This cannot be undone.`)) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE', headers: authHeaders() });
+                if (!res.ok) throw new Error('Delete failed');
+                users = users.filter(u => u.id !== id);
+                renderTable();
+            } catch (err) {
+                alert(`Unable to delete user: ${err.message}`);
+            }
+        }
+
+        if (editBtn) {
+            openModal(editBtn.dataset.id);
+        }
+    });
+
+    /* ============ MODAL LOGIC ============ */
+    const modal          = document.getElementById('userModal');
+    const modalOverlay    = document.getElementById('modalOverlay');
+    const openCreateBtn   = document.getElementById('openCreateModal');
+    const closeModalBtn   = document.getElementById('closeModalBtn');
+    const cancelModalBtn  = document.getElementById('cancelModalBtn');
+    const modalTitle      = document.getElementById('modalTitle');
+    const modalHeaderIcon = document.getElementById('modalHeaderIcon');
+    const userForm        = document.getElementById('userForm');
+    const userIdField     = document.getElementById('userIdField');
+    const fullNameInput   = document.getElementById('fullName');
+    const emailInput      = document.getElementById('userEmail');
+    const passwordInput   = document.getElementById('userPassword');
+    const passwordHint    = document.getElementById('passwordHint');
+    const googleNote      = document.getElementById('googleNote');
+    const providerSelect  = document.getElementById('authProvider');
+    const activeToggle    = document.getElementById('activeToggle');
+    const roleInputs      = () => document.querySelectorAll('.role-input');
+    const roleError       = document.getElementById('roleError');
+    const formError       = document.getElementById('formError');
+    const submitBtn       = document.getElementById('submitUserBtn');
+    const submitLabel     = document.getElementById('submitUserLabel');
+    const submitSpinner   = document.getElementById('submitUserSpinner');
+
+    function togglePasswordRequirement() {
+        const isGoogle = providerSelect.value === 'GOOGLE';
+        passwordHint.textContent = isGoogle ? '(not required)' : '(required)';
+        googleNote.classList.toggle('hidden', !isGoogle);
+        passwordInput.required = !isGoogle;
+        passwordInput.disabled = isGoogle;
+        passwordInput.placeholder = isGoogle ? 'Managed by Google' : '••••••••';
+    }
+    providerSelect.addEventListener('change', togglePasswordRequirement);
+
+    function resetForm() {
+        userForm.reset();
+        userIdField.value = '';
+        roleInputs().forEach(cb => cb.checked = false);
+        activeToggle.checked = true;
+        formError.classList.add('hidden');
+        roleError.classList.add('hidden');
+        togglePasswordRequirement();
+    }
+
+    function openModal(editId = null) {
+        resetForm();
+        if (editId) {
+            const u = users.find(x => x.id === editId);
+            modalTitle.textContent = 'Edit User';
+            modalHeaderIcon.className = 'fa-solid fa-user-pen text-sm';
+            submitLabel.textContent = 'Save Changes';
+            userIdField.value = u.id;
+            fullNameInput.value = u.fullName;
+            emailInput.value = u.email;
+            providerSelect.value = u.provider;
+            activeToggle.checked = u.active;
+            roleInputs().forEach(cb => cb.checked = u.roles.includes(cb.value));
+            togglePasswordRequirement();
+        } else {
+            modalTitle.textContent = 'Register New User';
+            modalHeaderIcon.className = 'fa-solid fa-user-plus text-sm';
+            submitLabel.textContent = 'Create User';
+        }
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        fullNameInput.focus();
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    openCreateBtn.addEventListener('click', () => openModal());
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    });
+
+    /* ============ FORM SUBMIT (create / edit via fetch) ============ */
+    userForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        formError.classList.add('hidden');
+        roleError.classList.add('hidden');
+
+        const selectedRoles = Array.from(roleInputs()).filter(cb => cb.checked).map(cb => cb.value);
+        if (selectedRoles.length === 0) {
+            roleError.classList.remove('hidden');
+            return;
+        }
+
+        const isGoogle = providerSelect.value === 'GOOGLE';
+        if (!isGoogle && passwordInput.value.length < 6 && !userIdField.value) {
+            formError.textContent = 'Password must be at least 6 characters for local accounts.';
+            formError.classList.remove('hidden');
+            return;
+        }
+
+        const payload = {
+            fullName: fullNameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: isGoogle ? null : (passwordInput.value || null),
+            provider: providerSelect.value,
+            active: activeToggle.checked,
+            roles: selectedRoles,
+        };
+
+        const editingId = userIdField.value;
+        const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
+        const method = editingId ? 'PUT' : 'POST';
+
+        submitBtn.disabled = true;
+        submitSpinner.classList.remove('hidden');
+        submitLabel.textContent = editingId ? 'Saving…' : 'Creating…';
+
+        try {
+            const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || 'Request failed. Please check the details and try again.');
+
+            if (editingId) {
+                const idx = users.findIndex(u => u.id === editingId);
+                users[idx] = { ...users[idx], ...payload };
+            } else {
+                users.unshift({ id: data.id || `U-${1000 + users.length + 1}`, ...payload });
+            }
+
+            renderTable();
+            closeModal();
+
+        } catch (err) {
+            formError.textContent = err.message;
+            formError.classList.remove('hidden');
+        } finally {
+            submitBtn.disabled = false;
+            submitSpinner.classList.add('hidden');
+            submitLabel.textContent = editingId ? 'Save Changes' : 'Create User';
+        }
+    });
+
+    togglePasswordRequirement();
+</script>
+</body>
+</html>

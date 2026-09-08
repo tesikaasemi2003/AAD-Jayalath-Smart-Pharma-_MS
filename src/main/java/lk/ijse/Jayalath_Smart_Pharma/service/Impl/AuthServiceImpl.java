@@ -4,12 +4,12 @@ import lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage;
 import lk.ijse.Jayalath_Smart_Pharma.dto.AuthResponseDTO;
 import lk.ijse.Jayalath_Smart_Pharma.dto.GoogleAuthRequestDTO;
 import lk.ijse.Jayalath_Smart_Pharma.dto.LoginRequestDTO;
-import lk.ijse.Jayalath_Smart_Pharma.entity.Role;
 import lk.ijse.Jayalath_Smart_Pharma.entity.User;
 import lk.ijse.Jayalath_Smart_Pharma.enumaration.authProvider;
 import lk.ijse.Jayalath_Smart_Pharma.repository.UserRepository;
 import lk.ijse.Jayalath_Smart_Pharma.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,17 +18,19 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
 
-    public AuthServiceImpl(UserRepository userRepository) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public AuthResponseDTO authenticateUser(LoginRequestDTO loginDTO) {
         log.info("Attempting authentication for email: {}", loginDTO.getUsername());
 
-        // Username ලෙස එන අගය Email එකක් ලෙස සොයයි
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.getUsername());
 
         if (optionalUser.isEmpty()) {
@@ -37,13 +39,12 @@ public class AuthServiceImpl implements AuthService {
 
         User user = optionalUser.get();
 
-        if (user.getPassword() == null || !user.getPassword().equals(loginDTO.getPassword())) {
+        if (user.getPassword() == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
         String generatedToken = "jwt-token-" + UUID.randomUUID();
 
-        // Set<Role> එකෙන් පළමු Role එක ලබා ගැනීම
         String roleName = user.getRole().stream()
                 .findFirst()
                 .map(role -> role.getRoleName() != null ? role.getRoleName().name() : "USER")
@@ -73,11 +74,10 @@ public class AuthServiceImpl implements AuthService {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            // අලුත් Google User කෙනෙකු සාදයි
             user = new User();
             user.setFullName("Google User");
             user.setEmail(mockGoogleEmail);
-            user.setAuthProvider(authProvider.GOOGLE); // ඔබගේ authProvider Enum එක අනුව set වේ
+            user.setAuthProvider(authProvider.GOOGLE);
             user = userRepository.save(user);
         }
 

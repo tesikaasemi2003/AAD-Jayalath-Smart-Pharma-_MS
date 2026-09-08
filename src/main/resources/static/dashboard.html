@@ -82,18 +82,48 @@
                 </svg>
             </div>
             <div class="hidden sm:block leading-tight">
-                <p class="font-display font-semibold text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-emerald-500">Engine</span></p>
+                <p class="font-display font-semibold text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-emerald-500">Dashboard</span></p>
                 <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">EXECUTIVE CONSOLE</p>
             </div>
         </div>
 
         <!-- Nav links -->
-        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
-            <a href="#" class="px-3 py-2 rounded-lg text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">Dashboard</a>
-            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Batches</a>
-            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Purchase Orders</a>
-            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Reports</a>
-            <a href="#" class="px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Settings</a>
+        <!-- Nav links (Clean & Ultra-Compact) -->
+        <!-- Nav links (Grouped Dropdowns) -->
+        <nav class="hidden lg:flex items-center gap-2 text-xs font-medium text-slate-400">
+            <a href="#" class="px-3 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-pie"></i> Dashboard
+            </a>
+
+            <!-- Admin Link -->
+            <a href="#" class="px-3 py-1.5 rounded-lg hover:text-slate-200 hover:bg-slate-800/60 transition-colors flex items-center gap-1.5">
+                <i class="fa-solid fa-user-shield"></i> Access Control
+            </a>
+
+            <!-- Inventory & Catalog Dropdown -->
+            <div class="relative group">
+                <button class="px-3 py-1.5 rounded-lg hover:text-slate-200 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-box-archive"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[10px] opacity-60"></i>
+                </button>
+                <div class="absolute left-0 top-full mt-1 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="#" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
+                    <a href="#" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
+                </div>
+            </div>
+
+            <!-- Sales & POS Dropdown -->
+            <div class="relative group">
+                <button class="px-3 py-1.5 rounded-lg hover:text-slate-200 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-cash-register"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[10px] opacity-60"></i>
+                </button>
+                <div class="absolute left-0 top-full mt-1 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="#" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
+                    <a href="#" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
+                    <a href="#" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
+                </div>
+            </div>
+
+
         </nav>
 
         <!-- Right cluster -->
@@ -101,24 +131,24 @@
 
             <!-- Connection indicator -->
             <div class="hidden md:flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-pulseDot absolute inline-flex h-full w-full rounded-full bg-emerald-500"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-pulseDot absolute inline-flex h-full w-full rounded-full bg-emerald-500"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
                 <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Neon Cloud MySQL Active</span>
             </div>
 
             <!-- Role badge -->
             <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2.5 py-1">
-        <i class="fa-solid fa-user-shield text-[10px]"></i> ADMIN
-      </span>
+                <i class="fa-solid fa-user-shield text-[10px]"></i> ADMIN
+            </span>
 
             <!-- Theme toggle -->
             <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-11 h-6 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5">
-        <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
-          <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
-          <i class="fa-solid fa-moon text-emerald-400 text-[10px] hidden dark:inline"></i>
-        </span>
+                <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+                  <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
+                  <i class="fa-solid fa-moon text-emerald-400 text-[10px] hidden dark:inline"></i>
+                </span>
             </button>
 
             <!-- Avatar -->
@@ -210,9 +240,9 @@
                     </div>
                 </div>
                 <div>
-          <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider text-rose-600 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-full px-2 py-0.5 mb-1.5">
-            <i class="fa-solid fa-bolt"></i> AI EXPIRY ALERT
-          </span>
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider text-rose-600 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-full px-2 py-0.5 mb-1.5">
+                      <i class="fa-solid fa-bolt"></i> AI EXPIRY ALERT
+                    </span>
                     <p class="font-display font-semibold text-slate-900 dark:text-slate-50">Batch #B102 · Amoxicillin 500mg</p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">840 units on hand · expires in <span class="font-semibold text-rose-500">28 days</span> · FEFO priority</p>
                 </div>
@@ -367,29 +397,12 @@
     const userEmail = localStorage.getItem('userEmail') || '';
     const userFullName = localStorage.getItem('userFullName') || 'User';
 
-    // Login වී නැත්නම් කෙළින්ම Login Page එකට Redirect කරයි
     if (!token) {
         window.location.href = 'login.html';
     }
 
-    // Header UI එක Dynamic ලෙස Update කිරීම
-    document.addEventListener('DOMContentLoaded', () => {
-        const roleBadge = document.querySelector('header .fa-user-shield')?.parentElement;
-        if (roleBadge) {
-            roleBadge.innerHTML = `<i class="fa-solid fa-user-shield text-[10px]"></i> ${userRole}`;
-        }
-
-        const avatar = document.querySelector('header .w-8.h-8');
-        if (avatar) {
-            const initials = userFullName ? userFullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US';
-            avatar.textContent = initials;
-            avatar.title = `${userFullName} (${userEmail})`;
-        }
-    });
-
     /* ============ 2. THEME TOGGLE ============ */
     const root = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
 
     function applyTheme(theme) {
         if (theme === 'dark') root.classList.add('dark');
@@ -401,89 +414,7 @@
         || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     applyTheme(savedTheme);
 
-    themeToggle.addEventListener('click', () => {
-        applyTheme(root.classList.contains('dark') ? 'light' : 'dark');
-        renderCharts();
-    });
-
-    /* ============ 3. LAST SYNC TIMESTAMP ============ */
-    document.getElementById('lastUpdated').textContent =
-        'Last sync ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    /* ============ 4. EXPIRY GAUGE ============ */
-    (function drawGauge() {
-        const ring = document.getElementById('expiryGaugeRing');
-        if (!ring) return;
-        const circumference = 2 * Math.PI * 34;
-        const daysRemaining = 28;
-        const riskWindow = 60;
-        const fraction = 1 - Math.min(daysRemaining / riskWindow, 1);
-        const offset = circumference * (1 - fraction);
-        requestAnimationFrame(() => { ring.style.strokeDashoffset = offset; });
-    })();
-
-    /* ============ 5. APPLY DYNAMIC DISCOUNT (BACKEND PATCH) ============ */
-    const applyBtn = document.getElementById('applyDiscountBtn');
-    const btnLabel = document.getElementById('discountBtnLabel');
-    const btnIcon  = document.getElementById('discountBtnIcon');
-    const statusEl = document.getElementById('discountStatus');
-
-    applyBtn?.addEventListener('click', async () => {
-        applyBtn.disabled = true;
-        btnIcon.className = 'fa-solid fa-spinner fa-spin';
-        btnLabel.textContent = 'Applying discount…';
-        statusEl.classList.add('hidden');
-
-        try {
-            const res = await fetch(`${API_BASE}/batches/102/apply-discount`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ discountPercent: 20 }),
-            });
-
-            if (res.status === 401 || res.status === 403) {
-                localStorage.clear();
-                window.location.href = 'login.html';
-                return;
-            }
-
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || `Request failed (HTTP ${res.status})`);
-
-            statusEl.textContent = `✓ 20% dynamic discount applied to Batch #B102. New price effective immediately.`;
-            statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30';
-            statusEl.classList.remove('hidden');
-
-            btnIcon.className = 'fa-solid fa-check';
-            btnLabel.textContent = 'Discount Applied';
-
-            const log = document.getElementById('auditLog');
-            if (log) {
-                const item = document.createElement('li');
-                item.className = 'px-5 lg:px-6 py-3 flex items-start gap-3';
-                item.innerHTML = `
-          <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
-          <div>
-            <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B102</span> — 20% discount applied</p>
-            <p class="text-xs text-slate-400 font-mono mt-0.5">Just now · by AI Engine</p>
-          </div>`;
-                log.prepend(item);
-            }
-
-        } catch (err) {
-            statusEl.textContent = `✕ Failed to apply discount: ${err.message}`;
-            statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-rose-700 dark:text-rose-300 bg-rose-500/10 border-rose-500/30';
-            statusEl.classList.remove('hidden');
-            applyBtn.disabled = false;
-            btnIcon.className = 'fa-solid fa-tag';
-            btnLabel.textContent = 'Apply 20% Dynamic Discount';
-        }
-    });
-
-    /* ============ 6. CHARTS RENDER ============ */
+    /* ============ 3. CHARTS RENDER LOGIC ============ */
     let forecastChartInstance = null;
     let donutChartInstance = null;
 
@@ -499,6 +430,7 @@
     function renderCharts() {
         const t = chartTheme();
 
+        // Line Chart (Forecast vs Actual)
         const forecastEl = document.getElementById('forecastChart');
         if (forecastEl) {
             const lineCtx = forecastEl.getContext('2d');
@@ -541,6 +473,7 @@
             });
         }
 
+        // Donut Chart (Expiry Distribution)
         const donutEl = document.getElementById('expiryDonutChart');
         if (donutEl) {
             const donutCtx = donutEl.getContext('2d');
@@ -571,7 +504,145 @@
         }
     }
 
-    renderCharts();
+    /* ============ 4. BACKEND DATA INTEGRATION ============ */
+    async function loadDashboardAnalytics() {
+        if (!token) return;
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
+        try {
+            const riskRes = await fetch(`${API_BASE}/analytics/expiry-risk`, { headers });
+            if (riskRes.ok) {
+                const riskJson = await riskRes.json();
+                const riskList = riskJson.data || riskJson.body;
+
+                if (Array.isArray(riskList) && donutChartInstance) {
+                    let critical = 0, warning = 0, moderate = 0, safe = 0;
+
+                    riskList.forEach(item => {
+                        const days = item.daysToExpiry || item.daysRemaining || 91;
+                        if (days <= 30) critical++;
+                        else if (days <= 60) warning++;
+                        else if (days <= 90) moderate++;
+                        else safe++;
+                    });
+
+                    donutChartInstance.data.datasets[0].data = [critical, warning, moderate, safe];
+                    donutChartInstance.update();
+                }
+            }
+        } catch (err) {
+            console.error("Analytics fetch error:", err);
+        }
+    }
+
+    /* ============ 5. INITIALIZATION ON DOM LOAD ============ */
+    document.addEventListener('DOMContentLoaded', () => {
+        // User Info Update
+        const roleBadge = document.querySelector('header .fa-user-shield')?.parentElement;
+        if (roleBadge) {
+            roleBadge.innerHTML = `<i class="fa-solid fa-user-shield text-[10px]"></i> ${userRole}`;
+        }
+
+        const avatar = document.querySelector('header .w-8.h-8');
+        if (avatar) {
+            const initials = userFullName ? userFullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US';
+            avatar.textContent = initials;
+            avatar.title = `${userFullName} (${userEmail})`;
+        }
+
+        // Theme Toggle Listener
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle?.addEventListener('click', () => {
+            applyTheme(root.classList.contains('dark') ? 'light' : 'dark');
+            renderCharts();
+        });
+
+        // Sync Time Stamp
+        const lastUpdated = document.getElementById('lastUpdated');
+        if (lastUpdated) {
+            lastUpdated.textContent = 'Last sync ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Radial Expiry Gauge
+        const ring = document.getElementById('expiryGaugeRing');
+        if (ring) {
+            const circumference = 2 * Math.PI * 34;
+            const daysRemaining = 28;
+            const riskWindow = 60;
+            const fraction = 1 - Math.min(daysRemaining / riskWindow, 1);
+            const offset = circumference * (1 - fraction);
+            requestAnimationFrame(() => { ring.style.strokeDashoffset = offset; });
+        }
+
+        // Discount Button Handler
+        const applyBtn = document.getElementById('applyDiscountBtn');
+        const btnLabel = document.getElementById('discountBtnLabel');
+        const btnIcon  = document.getElementById('discountBtnIcon');
+        const statusEl = document.getElementById('discountStatus');
+
+        applyBtn?.addEventListener('click', async () => {
+            applyBtn.disabled = true;
+            btnIcon.className = 'fa-solid fa-spinner fa-spin';
+            btnLabel.textContent = 'Applying discount…';
+            statusEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(`${API_BASE}/batches/102/apply-discount`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ discountPercent: 20 }),
+                });
+
+                if (res.status === 401 || res.status === 403) {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.message || `Request failed (HTTP ${res.status})`);
+
+                statusEl.textContent = `✓ 20% dynamic discount applied to Batch #B102. New price effective immediately.`;
+                statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30';
+                statusEl.classList.remove('hidden');
+
+                btnIcon.className = 'fa-solid fa-check';
+                btnLabel.textContent = 'Discount Applied';
+
+                const log = document.getElementById('auditLog');
+                if (log) {
+                    const item = document.createElement('li');
+                    item.className = 'px-5 lg:px-6 py-3 flex items-start gap-3';
+                    item.innerHTML = `
+                      <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                      <div>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B102</span> — 20% discount applied</p>
+                        <p class="text-xs text-slate-400 font-mono mt-0.5">Just now · by AI Engine</p>
+                      </div>`;
+                    log.prepend(item);
+                }
+
+            } catch (err) {
+                statusEl.textContent = `✕ Failed to apply discount: ${err.message}`;
+                statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-rose-700 dark:text-rose-300 bg-rose-500/10 border-rose-500/30';
+                statusEl.classList.remove('hidden');
+                applyBtn.disabled = false;
+                btnIcon.className = 'fa-solid fa-tag';
+                btnLabel.textContent = 'Apply 20% Dynamic Discount';
+            }
+        });
+
+        // Render Charts & Fetch Live Backend Analytics
+        renderCharts();
+        loadDashboardAnalytics();
+    });
 </script>
 </body>
 </html>

@@ -297,7 +297,7 @@
         clearError();
 
         if (!form.checkValidity()) {
-            showError('Please enter a valid work email and a password of at least 6 characters.');
+            showError('Please enter a valid work email and password.');
             return;
         }
 
@@ -308,24 +308,31 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    username: emailInput.value.trim(), // Backend expects 'username' key
+                    username: emailInput.value.trim(),
                     password: pwInput.value
                 }),
             });
 
             const jsonResponse = await res.json().catch(() => ({}));
 
-            if (!res.ok || jsonResponse.code !== 200) {
+            if (!res.ok || (jsonResponse.status !== undefined && jsonResponse.status !== 1 && jsonResponse.status !== 200)) {
                 throw new Error(jsonResponse.message || 'Invalid credentials. Please try again.');
             }
 
-            const authData = jsonResponse.data; // AuthResponseDTO extracted from CommonResponse
+            const authData = jsonResponse.body || jsonResponse.data || jsonResponse;
+            const tokenValue = authData.token || authData.accessToken || authData.jwtToken;
 
-            if (!authData || !authData.token) {
+            if (!tokenValue) {
                 throw new Error('Login succeeded but no token was returned by the server.');
             }
 
-            persistSession(authData, rememberBox.checked);
+            persistSession({
+                token: tokenValue,
+                username: authData.username || emailInput.value.trim(),
+                role: authData.role || 'USER',
+                fullName: authData.fullName || authData.name || 'User'
+            }, rememberBox.checked);
+
             window.location.href = 'dashboard.html';
 
         } catch (err) {
