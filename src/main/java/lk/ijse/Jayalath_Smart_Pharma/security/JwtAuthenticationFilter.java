@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.security.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 
 @Component
 @RequiredArgsConstructor

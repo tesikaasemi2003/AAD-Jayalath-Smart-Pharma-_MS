@@ -1,6 +1,6 @@
 package lk.ijse.Jayalath_Smart_Pharma.security;
 
-import com.google.api.client.util.Key;
+import java.security.Key;
 import com.google.api.client.util.Value;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -53,7 +53,7 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(token)
