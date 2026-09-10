@@ -97,8 +97,8 @@
                     <i class="fa-solid fa-box-archive text-[11px]"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
                 </button>
                 <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
-                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
-                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
+                    <a href="master-catalog-supplier.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
+                    <a href="FEFO-stock-barcode.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
                 </div>
             </div>
 
@@ -108,9 +108,9 @@
                     <i class="fa-solid fa-cash-register text-[11px]"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
                 </button>
                 <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
-                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
-                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
-                    <a href="#" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
+                    <a href="prescription-portal.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
+                    <a href="POS.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
+                    <a href="purchase-orders.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
                 </div>
             </div>
         </nav>
@@ -126,7 +126,6 @@
         </div>
 
     </div>
-</header>
 </header>
 
 <!-- ============ MAIN ============ -->
@@ -305,10 +304,13 @@
     /* ============ THEME TOGGLE ============ */
     const root = document.documentElement;
     const themeToggle = document.getElementById('themeToggle');
+
     function applyTheme(theme) {
-        if (theme === 'dark') root.classList.add('dark'); else root.classList.remove('dark');
+        if (theme === 'dark') root.classList.add('dark');
+        else root.classList.remove('dark');
         localStorage.setItem('theme', theme);
     }
+
     applyTheme(localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
     themeToggle.addEventListener('click', () => applyTheme(root.classList.contains('dark') ? 'light' : 'dark'));
 
@@ -325,20 +327,15 @@
         ROLE_CASHIER:    { label: 'Cashier',    cls: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border-cyan-500/30' },
     };
 
-    /* ============ SEED DATA ============ */
-    let users = [
-        { id: 'U-1001', fullName: 'Nadeesha Perera', email: 'nadeesha.perera@smartpharma.lk', provider: 'LOCAL',  active: true,  roles: ['ROLE_ADMIN'] },
-        { id: 'U-1002', fullName: 'Kasun Jayalath',   email: 'kasun.jayalath@smartpharma.lk',  provider: 'GOOGLE', active: true,  roles: ['ROLE_PHARMACIST'] },
-        { id: 'U-1003', fullName: 'Ishara Fernando',  email: 'ishara.fernando@smartpharma.lk', provider: 'LOCAL',  active: true,  roles: ['ROLE_CASHIER'] },
-        { id: 'U-1004', fullName: 'Dilshan Wickrama', email: 'dilshan.w@smartpharma.lk',       provider: 'LOCAL',  active: false, roles: ['ROLE_PHARMACIST', 'ROLE_CASHIER'] },
-        { id: 'U-1005', fullName: 'Tharushi Silva',   email: 'tharushi.silva@smartpharma.lk',  provider: 'GOOGLE', active: true,  roles: ['ROLE_ADMIN', 'ROLE_PHARMACIST'] },
-    ];
+    /* ============ STATE ============ */
+    let users = [];
 
     const tbody       = document.getElementById('userTableBody');
     const emptyState  = document.getElementById('emptyState');
     const searchInput = document.getElementById('searchInput');
     const roleFilter  = document.getElementById('roleFilter');
 
+    /* ============ BADGE RENDERERS ============ */
     function providerBadge(provider) {
         if (provider === 'GOOGLE') {
             return `<span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1">
@@ -351,19 +348,24 @@
     }
 
     function roleBadges(roles) {
+        if (!roles || !Array.isArray(roles)) return '';
         return roles.map(r => {
             const meta = ROLE_META[r] || { label: r, cls: 'bg-slate-500/10 text-slate-500 border-slate-500/30' };
-            return `<span class="inline-block text-[11px] font-mono font-medium border rounded-full px-2 py-0.5 mr-1 mb-1 ${meta.cls}">${r}</span>`;
+            return `<span class="inline-block text-[11px] font-mono font-medium border rounded-full px-2 py-0.5 mr-1 mb-1 ${meta.cls}">${meta.label || r}</span>`;
         }).join('');
     }
 
+    /* ============ RENDER TABLE ============ */
     function renderTable() {
         const q = searchInput.value.trim().toLowerCase();
         const roleQ = roleFilter.value;
 
-        const filtered = users.filter(u => {
-            const matchesSearch = !q || u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
-            const matchesRole = !roleQ || u.roles.includes(roleQ);
+        // users Array එකක් නොවේ නම් හිස් Array එකක් යොදාගනී
+        const userList = Array.isArray(users) ? users : [];
+
+        const filtered = userList.filter(u => {
+            const matchesSearch = !q || (u.fullName && u.fullName.toLowerCase().includes(q)) || (u.email && u.email.toLowerCase().includes(q));
+            const matchesRole = !roleQ || (u.roles && u.roles.includes(roleQ));
             return matchesSearch && matchesRole;
         });
 
@@ -374,7 +376,7 @@
         <td class="px-3 py-3.5">
           <div class="flex items-center gap-2.5">
             <div class="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center text-white text-[11px] font-semibold shrink-0">
-              ${u.fullName.split(' ').map(n => n[0]).slice(0,2).join('')}
+              ${u.fullName ? u.fullName.split(' ').map(n => n[0]).slice(0,2).join('') : 'U'}
             </div>
             <span class="font-medium text-slate-800 dark:text-slate-100">${u.fullName}</span>
           </div>
@@ -404,16 +406,41 @@
 
     searchInput.addEventListener('input', renderTable);
     roleFilter.addEventListener('change', renderTable);
-    renderTable();
 
-    /* ============ ACTIVE STATUS TOGGLE (event delegation) ============ */
+    /* ============ FETCH USERS FROM DATABASE (GET) ============ */
+    async function fetchUsersFromDatabase() {
+        try {
+            const res = await fetch(API_BASE, { headers: authHeaders() });
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+            const data = await res.json();
+
+            if (Array.isArray(data)) {
+                users = data;
+            } else if (data && Array.isArray(data.content)) {
+                users = data.content;
+            } else {
+                users = [];
+            }
+
+            renderTable();
+        } catch (err) {
+            console.error('Backend fetch error:', err.message);
+            users = [];
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-rose-500">Failed to connect to Spring Boot backend.</td></tr>`;
+        }
+    }
+
+    /* ============ ACTIVE STATUS TOGGLE (PATCH) ============ */
     tbody.addEventListener('change', async (e) => {
         if (!e.target.classList.contains('active-toggle')) return;
         const id = e.target.dataset.id;
         const user = users.find(u => u.id === id);
+        if (!user) return;
+
         const newStatus = e.target.checked;
         const previous = user.active;
-        user.active = newStatus; // optimistic update
+        user.active = newStatus;
 
         try {
             const res = await fetch(`${API_BASE}/${id}/status`, {
@@ -423,13 +450,13 @@
             });
             if (!res.ok) throw new Error('Status update failed');
         } catch (err) {
-            user.active = previous; // rollback
+            user.active = previous;
             e.target.checked = previous;
-            console.error(err.message);
+            alert(`Could not update status: ${err.message}`);
         }
     });
 
-    /* ============ DELETE (event delegation) ============ */
+    /* ============ DELETE USER (DELETE) ============ */
     tbody.addEventListener('click', async (e) => {
         const delBtn = e.target.closest('.delete-btn');
         const editBtn = e.target.closest('.edit-btn');
@@ -437,11 +464,13 @@
         if (delBtn) {
             const id = delBtn.dataset.id;
             const user = users.find(u => u.id === id);
-            if (!confirm(`Remove ${user.fullName} from Smart-Pharma Engine? This cannot be undone.`)) return;
+            if (!confirm(`Remove ${user ? user.fullName : 'this user'} from Smart-Pharma Engine? This cannot be undone.`)) return;
 
             try {
                 const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE', headers: authHeaders() });
                 if (!res.ok) throw new Error('Delete failed');
+
+                // Database එකෙන් delete වූ පසු UI එකෙන්ද ඉවත් කර table එක re-render කිරීම
                 users = users.filter(u => u.id !== id);
                 renderTable();
             } catch (err) {
@@ -454,7 +483,7 @@
         }
     });
 
-    /* ============ MODAL LOGIC ============ */
+    /* ============ MODAL CONTROLS ============ */
     const modal          = document.getElementById('userModal');
     const modalOverlay    = document.getElementById('modalOverlay');
     const openCreateBtn   = document.getElementById('openCreateModal');
@@ -482,7 +511,7 @@
         const isGoogle = providerSelect.value === 'GOOGLE';
         passwordHint.textContent = isGoogle ? '(not required)' : '(required)';
         googleNote.classList.toggle('hidden', !isGoogle);
-        passwordInput.required = !isGoogle;
+        passwordInput.required = !isGoogle && !userIdField.value;
         passwordInput.disabled = isGoogle;
         passwordInput.placeholder = isGoogle ? 'Managed by Google' : '••••••••';
     }
@@ -502,6 +531,8 @@
         resetForm();
         if (editId) {
             const u = users.find(x => x.id === editId);
+            if (!u) return;
+
             modalTitle.textContent = 'Edit User';
             modalHeaderIcon.className = 'fa-solid fa-user-pen text-sm';
             submitLabel.textContent = 'Save Changes';
@@ -510,7 +541,7 @@
             emailInput.value = u.email;
             providerSelect.value = u.provider;
             activeToggle.checked = u.active;
-            roleInputs().forEach(cb => cb.checked = u.roles.includes(cb.value));
+            roleInputs().forEach(cb => cb.checked = u.roles && u.roles.includes(cb.value));
             togglePasswordRequirement();
         } else {
             modalTitle.textContent = 'Register New User';
@@ -531,11 +562,12 @@
     closeModalBtn.addEventListener('click', closeModal);
     cancelModalBtn.addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', closeModal);
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
     });
 
-    /* ============ FORM SUBMIT (create / edit via fetch) ============ */
+    /* ============ FORM SUBMIT (POST / PUT) ============ */
     userForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         formError.classList.add('hidden');
@@ -548,22 +580,26 @@
         }
 
         const isGoogle = providerSelect.value === 'GOOGLE';
-        if (!isGoogle && passwordInput.value.length < 6 && !userIdField.value) {
+        if (!isGoogle && !userIdField.value && passwordInput.value.length < 6) {
             formError.textContent = 'Password must be at least 6 characters for local accounts.';
             formError.classList.remove('hidden');
             return;
         }
 
+        const editingId = userIdField.value;
         const payload = {
+            id: editingId || null,
             fullName: fullNameInput.value.trim(),
             email: emailInput.value.trim(),
-            password: isGoogle ? null : (passwordInput.value || null),
             provider: providerSelect.value,
             active: activeToggle.checked,
-            roles: selectedRoles,
+            roles: selectedRoles
         };
 
-        const editingId = userIdField.value;
+        if (!isGoogle && passwordInput.value) {
+            payload.password = passwordInput.value;
+        }
+
         const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
         const method = editingId ? 'PUT' : 'POST';
 
@@ -574,16 +610,10 @@
         try {
             const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || 'Request failed. Please check the details and try again.');
 
-            if (editingId) {
-                const idx = users.findIndex(u => u.id === editingId);
-                users[idx] = { ...users[idx], ...payload };
-            } else {
-                users.unshift({ id: data.id || `U-${1000 + users.length + 1}`, ...payload });
-            }
+            if (!res.ok) throw new Error(data.message || 'Request failed. Please check the backend connection.');
 
-            renderTable();
+            await fetchUsersFromDatabase();
             closeModal();
 
         } catch (err) {
@@ -596,7 +626,6 @@
         }
     });
 
-    togglePasswordRequirement();
+    /* ============ INITIAL LOAD ============ */
+    fetchUsersFromDatabase();
 </script>
-</body>
-</html>

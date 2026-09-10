@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jayalath Smart-Pharma Engine · Master Catalog &amp; Supplier Management</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="js/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    keyframes: {
+                        floatUp: { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        modalIn: { '0%': { opacity: 0, transform: 'scale(0.96) translateY(6px)' }, '100%': { opacity: 1, transform: 'scale(1) translateY(0)' } },
+                    },
+                    animation: {
+                        floatUp: 'floatUp 0.4s ease-out both',
+                        modalIn: 'modalIn 0.22s cubic-bezier(0.16,1,0.3,1) both',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .theme-track { transition: background-color 200ms ease; }
+        .theme-dot { transition: transform 200ms ease; }
+        html.dark .theme-dot { transform: translateX(1.35rem); }
+
+        /* Toggle switch (Spring Mail Ready, etc.) */
+        .status-input:checked ~ .status-track { background-color: #14b8a6; }
+        .status-input:checked ~ .status-track .status-dot { transform: translateX(1.15rem); }
+        .status-dot { transition: transform 180ms ease; }
+
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.35); border-radius: 999px; }
+
+        .row-fade { animation: rowIn 0.3s ease-out both; }
+        @keyframes rowIn { from { opacity: 0; background-color: rgba(20,184,166,0.08);} to { opacity: 1; } }
+
+        .tab-pill.active { background: white; color: #0f766e; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        html.dark .tab-pill.active { background: #0f172a; color: #2dd4bf; }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-body transition-colors duration-200 min-h-screen">
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- 1. LEFT: LOGO & TITLE -->
+        <div class="flex-1 flex items-center justify-start shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 4h4.5a3.5 3.5 0 0 1 0 7H8v9M8 11l5 9" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="hidden sm:block leading-tight">
+                    <p class="font-display font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-50 tracking-tight">
+                        Jayalath Smart-Pharma <span class="text-emerald-500">Engine</span>
+                    </p>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-mono -mt-0.5">ACCESS CONTROL</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CENTER: NAVIGATION LINKS -->
+        <nav class="hidden lg:flex items-center justify-center gap-1 text-xs font-medium shrink-0">
+            <a href="dashboard.html" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie text-[11px]"></i> Dashboard
+            </a>
+            <a href="user-access-control.html" class="px-2.5 py-1 rounded-md text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-user-shield text-[11px]"></i> Access Control
+            </a>
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-box-archive text-[11px]"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 w-52 hidden group-hover:block z-50">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2">
+                        <a href="master-catalog-supplier.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers
+                        </a>
+                        <a href="FEFO-stock-barcode.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-cash-register text-[11px]"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full pt-1.5 w-52 hidden group-hover:block z-50">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2">
+                        <a href="prescription-portal.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-prescription"></i> Prescription Portal
+                        </a>
+                        <a href="POS.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> POS Billing Counter
+                        </a>
+                        <a href="purchase-orders.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-truck"></i> Purchase Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 3. RIGHT: CLUSTER -->
+        <div class="flex-1 flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+            <div class="hidden xl:flex items-center gap-2 pl-3 pr-3.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400">Neon Cloud MySQL Active</span>
+            </div>
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono font-semibold tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2.5 py-1">
+                <i class="fa-solid fa-user-shield text-[10px]"></i> ADMIN
+            </span>
+            <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-11 h-6 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5 shrink-0">
+                <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+                    <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
+                    <i class="fa-solid fa-moon text-emerald-400 text-[10px] hidden dark:inline"></i>
+                </span>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-xs font-semibold shadow-sm shrink-0">
+                JS
+            </div>
+        </div>
+
+    </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="max-w-[1400px] mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+    <!-- ============ PAGE HEADER ============ -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Master Catalog &amp; Supplier Management</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage the drug master index, therapeutic categories, and approved suppliers.</p>
+        </div>
+    </div>
+
+    <!-- ============ TAB NAV ============ -->
+    <div class="inline-flex flex-wrap items-center gap-1 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-1" id="tabNav">
+        <!-- populated by JS -->
+    </div>
+
+    <!-- ============ TAB 1: MASTER DRUG INDEX ============ -->
+    <section id="panel-drugs" class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input id="drugSearch" type="text" placeholder="Search brand or generic name…"
+                       class="w-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <button id="openDrugCreate" class="inline-flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-teal-500/20 shrink-0">
+                <i class="fa-solid fa-plus"></i> Add Master Drug
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                    <tr class="text-left text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+                        <th class="px-5 lg:px-6 py-3 font-medium">Brand Name</th>
+                        <th class="px-3 py-3 font-medium">Generic Name</th>
+                        <th class="px-3 py-3 font-medium">Category</th>
+                        <th class="px-3 py-3 font-medium">Reorder Level</th>
+                        <th class="px-3 py-3 font-medium">Unit Type</th>
+                        <th class="px-3 py-3 font-medium text-right pr-5 lg:pr-6">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="drugTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                </table>
+            </div>
+            <p id="drugEmptyState" class="hidden text-center text-sm text-slate-400 py-10">
+                <i class="fa-solid fa-prescription-bottle text-lg mb-2 block"></i> No drugs match your search.
+            </p>
+        </div>
+    </section>
+
+    <!-- ============ TAB 2: DRUG CATEGORIES ============ -->
+    <section id="panel-categories" class="space-y-4 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input id="categorySearch" type="text" placeholder="Search category name…"
+                       class="w-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <button id="openCategoryCreate" class="inline-flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-teal-500/20 shrink-0">
+                <i class="fa-solid fa-plus"></i> Add Category
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                    <tr class="text-left text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+                        <th class="px-5 lg:px-6 py-3 font-medium">Category ID</th>
+                        <th class="px-3 py-3 font-medium">Name</th>
+                        <th class="px-3 py-3 font-medium">Description</th>
+                        <th class="px-3 py-3 font-medium text-right pr-5 lg:pr-6">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categoryTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                </table>
+            </div>
+            <p id="categoryEmptyState" class="hidden text-center text-sm text-slate-400 py-10">
+                <i class="fa-solid fa-tags text-lg mb-2 block"></i> No categories match your search.
+            </p>
+        </div>
+    </section>
+
+    <!-- ============ TAB 3: SUPPLIER DIRECTORY ============ -->
+    <section id="panel-suppliers" class="space-y-4 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input id="supplierSearch" type="text" placeholder="Search supplier name or email…"
+                       class="w-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <button id="openSupplierCreate" class="inline-flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-teal-500/20 shrink-0">
+                <i class="fa-solid fa-plus"></i> Add Supplier
+            </button>
+        </div>
+
+        <div id="supplierGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        <p id="supplierEmptyState" class="hidden text-center text-sm text-slate-400 py-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+            <i class="fa-solid fa-truck-medical text-lg mb-2 block"></i> No suppliers match your search.
+        </p>
+    </section>
+
+</main>
+
+<!-- ============ DRUG MODAL ============ -->
+<div id="drugModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="drug-overlay absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl animate-modalIn max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center">
+                    <i id="drugModalIcon" class="fa-solid fa-pills text-sm"></i>
+                </div>
+                <h2 id="drugModalTitle" class="font-display font-semibold text-lg text-slate-900 dark:text-slate-50">Add Master Drug</h2>
+            </div>
+            <button class="drug-close w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="drugForm" class="px-6 py-5 space-y-5">
+            <input type="hidden" id="drugId" value="" />
+
+            <div>
+                <label for="drugBrand" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Brand Name</label>
+                <input type="text" id="drugBrand" required placeholder="e.g. Panadol"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <div>
+                <label for="drugGeneric" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Generic Name</label>
+                <input type="text" id="drugGeneric" required placeholder="e.g. Paracetamol"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="drugCategory" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Category</label>
+                    <div class="relative">
+                        <select id="drugCategory" required
+                                class="w-full appearance-none bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-3.5 pr-8 py-2.5 text-sm outline-none transition-colors"></select>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+                <div>
+                    <label for="drugUnit" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Unit Type</label>
+                    <div class="relative">
+                        <select id="drugUnit" required
+                                class="w-full appearance-none bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-3.5 pr-8 py-2.5 text-sm outline-none transition-colors">
+                            <option>Tablet</option><option>Capsule</option><option>Vial</option><option>Bottle</option><option>Strip</option><option>Box</option><option>Syringe</option><option>Tube</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label for="drugReorder" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Reorder Level</label>
+                <input type="number" id="drugReorder" required min="0" placeholder="e.g. 50"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm font-mono outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <p id="drugFormError" class="hidden text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2"></p>
+
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button" class="drug-close text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 px-4 py-2.5 transition-colors">Cancel</button>
+                <button type="submit" class="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-5 py-2.5 transition-colors shadow-lg shadow-teal-500/20">
+                    <span id="drugSubmitLabel">Create Drug</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ CATEGORY MODAL ============ -->
+<div id="categoryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="category-overlay absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl animate-modalIn max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center">
+                    <i id="categoryModalIcon" class="fa-solid fa-tags text-sm"></i>
+                </div>
+                <h2 id="categoryModalTitle" class="font-display font-semibold text-lg text-slate-900 dark:text-slate-50">Add Category</h2>
+            </div>
+            <button class="category-close w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="categoryForm" class="px-6 py-5 space-y-5">
+            <input type="hidden" id="categoryId" value="" />
+
+            <div>
+                <label for="categoryName" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Name</label>
+                <input type="text" id="categoryName" required placeholder="e.g. Antibiotics"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <div>
+                <label for="categoryDescription" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Description</label>
+                <textarea id="categoryDescription" required rows="3" placeholder="e.g. Medications that inhibit or kill bacterial growth"
+                          class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400 resize-none"></textarea>
+            </div>
+
+            <p id="categoryFormError" class="hidden text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2"></p>
+
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button" class="category-close text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 px-4 py-2.5 transition-colors">Cancel</button>
+                <button type="submit" class="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-5 py-2.5 transition-colors shadow-lg shadow-teal-500/20">
+                    <span id="categorySubmitLabel">Create Category</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ SUPPLIER MODAL ============ -->
+<div id="supplierModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="supplier-overlay absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl animate-modalIn max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center">
+                    <i id="supplierModalIcon" class="fa-solid fa-truck-medical text-sm"></i>
+                </div>
+                <h2 id="supplierModalTitle" class="font-display font-semibold text-lg text-slate-900 dark:text-slate-50">Add Supplier</h2>
+            </div>
+            <button class="supplier-close w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="supplierForm" class="px-6 py-5 space-y-5">
+            <input type="hidden" id="supplierId" value="" />
+
+            <div>
+                <label for="supplierName" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Supplier Name</label>
+                <input type="text" id="supplierName" required placeholder="e.g. Ceylon Pharma Distributors"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="supplierPhone" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Phone</label>
+                    <input type="tel" id="supplierPhone" required placeholder="+94 11 234 5678"
+                           class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm font-mono outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+                <div>
+                    <label for="supplierEmail" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Contact Email</label>
+                    <input type="email" id="supplierEmail" required placeholder="orders@supplier.com"
+                           class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+            </div>
+
+            <div>
+                <label for="supplierAddress" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Address</label>
+                <input type="text" id="supplierAddress" required placeholder="e.g. 120 Negombo Road, Wattala"
+                       class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg px-3.5 py-3">
+                <div>
+                    <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Spring Mail Ready</p>
+                    <p class="text-xs text-slate-400">Verified for automated procurement email dispatch</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer select-none">
+                    <input type="checkbox" id="supplierSpringMail" class="status-input sr-only peer">
+                    <span class="status-track w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition-colors relative">
+                        <span class="status-dot absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow"></span>
+                    </span>
+                </label>
+            </div>
+
+            <p id="supplierFormError" class="hidden text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2"></p>
+
+            <div class="flex items-center justify-end gap-3 pt-1">
+                <button type="button" class="supplier-close text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 px-4 py-2.5 transition-colors">Cancel</button>
+                <button type="submit" class="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 active:bg-teal-600 text-white text-sm font-semibold rounded-lg px-5 py-2.5 transition-colors shadow-lg shadow-teal-500/20">
+                    <span id="supplierSubmitLabel">Create Supplier</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ SCRIPT ============ -->
+<script>
+    // Initial Sample Data
+    let categories = [
+        { categoryId: 'CAT-101', categoryName: 'Analgesics', categoryDescription: 'Pain relievers and fever reducers' },
+        { categoryId: 'CAT-102', categoryName: 'Antibiotics', categoryDescription: 'Inhibits bacterial growth' },
+        { categoryId: 'CAT-103', categoryName: 'Antihistamines', categoryDescription: 'Allergy relief medications' }
+    ];
+
+    let drugs = [
+        { id: 'DRUG-001', brandName: 'Panadol Extra', genericName: 'Paracetamol + Caffeine', categoryId: 'CAT-101', reorderLevel: 100, unitType: 'Tablet' },
+        { id: 'DRUG-002', brandName: 'Amoxil', genericName: 'Amoxicillin', categoryId: 'CAT-102', reorderLevel: 50, unitType: 'Capsule' }
+    ];
+
+    let suppliers = [
+        { id: 'SUP-001', name: 'Ceylon Pharma Distributors', phone: '+94 11 234 5678', email: 'orders@ceylonpharma.lk', address: '120 Negombo Road, Wattala', springMail: true },
+        { id: 'SUP-002', name: 'Lanka Health Agency', phone: '+94 11 876 5432', email: 'supply@lankahealth.com', address: '45 Galle Road, Colombo 03', springMail: false }
+    ];
+
+    let activeTab = 'drugs';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initTabs();
+        renderAll();
+        bindEvents();
+    });
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Theme Switcher
+    function initTheme() {
+        const toggle = document.getElementById('themeToggle');
+        toggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+    }
+
+    // Tab Navigation System
+    function initTabs() {
+        const tabs = [
+            { id: 'drugs', label: 'Master Drug Index', icon: 'fa-pills' },
+            { id: 'categories', label: 'Categories', icon: 'fa-tags' },
+            { id: 'suppliers', label: 'Suppliers', icon: 'fa-truck-medical' }
+        ];
+
+        const container = document.getElementById('tabNav');
+        container.innerHTML = tabs.map(t => `
+            <button data-tab="${t.id}" class="tab-pill text-xs font-medium px-3.5 py-2 rounded-lg transition-all duration-150 flex items-center gap-2 ${t.id === activeTab ? 'active' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}">
+                <i class="fa-solid ${t.icon}"></i> ${t.label}
+            </button>
+        `).join('');
+
+        container.querySelectorAll('.tab-pill').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                activeTab = e.currentTarget.dataset.tab;
+                document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+
+                document.getElementById('panel-drugs').classList.toggle('hidden', activeTab !== 'drugs');
+                document.getElementById('panel-categories').classList.toggle('hidden', activeTab !== 'categories');
+                document.getElementById('panel-suppliers').classList.toggle('hidden', activeTab !== 'suppliers');
+            });
+        });
+    }
+
+    function renderAll() {
+        renderCategories();
+        renderDrugs();
+        renderSuppliers();
+        populateCategoryDropdown();
+    }
+
+    // Category Table Render
+    function renderCategories() {
+        const categoryTbody = document.getElementById('categoryTableBody');
+        const categoryEmptyState = document.getElementById('categoryEmptyState');
+        const categorySearch = document.getElementById('categorySearch');
+
+        if (!categoryTbody) return;
+
+        const q = categorySearch ? categorySearch.value.trim().toLowerCase() : '';
+        const filtered = categories.filter(c => {
+            const name = c.categoryName || c.name || '';
+            return !q || name.toLowerCase().includes(q);
+        });
+
+        if (categoryEmptyState) categoryEmptyState.classList.toggle('hidden', filtered.length !== 0);
+
+        categoryTbody.innerHTML = filtered.map(c => {
+            const id = c.categoryId ?? c.id ?? '';
+            const name = c.categoryName ?? c.name ?? '';
+            const desc = c.categoryDescription ?? c.description ?? '';
+
+            return `
+            <tr class="row-fade hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" data-id="${id}">
+                <td class="px-5 lg:px-6 py-3.5 font-mono text-xs text-slate-400">${id}</td>
+                <td class="px-3 py-3.5 font-medium text-slate-800 dark:text-slate-100">${escapeHtml(name)}</td>
+                <td class="px-3 py-3.5 text-slate-500 dark:text-slate-400 max-w-md">${escapeHtml(desc)}</td>
+                <td class="px-3 py-3.5 text-right pr-5 lg:pr-6">
+                    <button onclick="editCategory('${id}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-teal-500 hover:bg-teal-500/10 transition-colors" title="Edit category">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="deleteCategory('${id}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" title="Delete category">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    // Drug Table Render
+    function renderDrugs() {
+        const drugTbody = document.getElementById('drugTableBody');
+        const drugEmptyState = document.getElementById('drugEmptyState');
+        const drugSearch = document.getElementById('drugSearch');
+
+        if (!drugTbody) return;
+
+        const q = drugSearch ? drugSearch.value.trim().toLowerCase() : '';
+        const filtered = drugs.filter(d => !q || d.brandName.toLowerCase().includes(q) || d.genericName.toLowerCase().includes(q));
+
+        if (drugEmptyState) drugEmptyState.classList.toggle('hidden', filtered.length !== 0);
+
+        drugTbody.innerHTML = filtered.map(d => {
+            const cat = categories.find(c => (c.categoryId || c.id) === d.categoryId);
+            const categoryName = cat ? (cat.categoryName || cat.name) : 'Uncategorized';
+
+            return `
+            <tr class="row-fade hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="px-5 lg:px-6 py-3.5 font-semibold text-slate-800 dark:text-slate-100">${escapeHtml(d.brandName)}</td>
+                <td class="px-3 py-3.5 text-slate-600 dark:text-slate-300">${escapeHtml(d.genericName)}</td>
+                <td class="px-3 py-3.5"><span class="inline-flex px-2.5 py-1 text-xs rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">${escapeHtml(categoryName)}</span></td>
+                <td class="px-3 py-3.5 font-mono text-slate-600 dark:text-slate-400">${d.reorderLevel}</td>
+                <td class="px-3 py-3.5 text-slate-500 dark:text-slate-400">${escapeHtml(d.unitType)}</td>
+                <td class="px-3 py-3.5 text-right pr-5 lg:pr-6">
+                    <button onclick="deleteDrug('${d.id}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" title="Delete drug">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    // Supplier Grid Render
+    function renderSuppliers() {
+        const supplierGrid = document.getElementById('supplierGrid');
+        const supplierEmptyState = document.getElementById('supplierEmptyState');
+        const supplierSearch = document.getElementById('supplierSearch');
+
+        if (!supplierGrid) return;
+
+        const q = supplierSearch ? supplierSearch.value.trim().toLowerCase() : '';
+        const filtered = suppliers.filter(s => !q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q));
+
+        if (supplierEmptyState) supplierEmptyState.classList.toggle('hidden', filtered.length !== 0);
+
+        supplierGrid.innerHTML = filtered.map(s => `
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 relative group">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h3 class="font-semibold text-slate-900 dark:text-slate-100">${escapeHtml(s.name)}</h3>
+                        <p class="text-xs text-slate-400 font-mono">${s.id}</p>
+                    </div>
+                    ${s.springMail ? '<span class="text-[10px] bg-teal-500/10 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full font-mono font-medium"><i class="fa-solid fa-paper-plane mr-1"></i> SpringMail</span>' : ''}
+                </div>
+                <div class="text-xs space-y-1 text-slate-500 dark:text-slate-400">
+                    <p><i class="fa-solid fa-phone text-slate-400 w-4"></i> ${escapeHtml(s.phone)}</p>
+                    <p><i class="fa-solid fa-envelope text-slate-400 w-4"></i> ${escapeHtml(s.email)}</p>
+                    <p><i class="fa-solid fa-location-dot text-slate-400 w-4"></i> ${escapeHtml(s.address)}</p>
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex justify-end">
+                    <button onclick="deleteSupplier('${s.id}')" class="text-xs text-rose-500 hover:text-rose-600 transition-colors">
+                        <i class="fa-solid fa-trash mr-1"></i> Remove
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function populateCategoryDropdown() {
+        const select = document.getElementById('drugCategory');
+        if (!select) return;
+        select.innerHTML = categories.map(c => `<option value="${c.categoryId || c.id}">${escapeHtml(c.categoryName || c.name)}</option>`).join('');
+    }
+
+    // CRUD Handlers
+    function bindEvents() {
+        // Searches
+        document.getElementById('categorySearch')?.addEventListener('input', renderCategories);
+        document.getElementById('drugSearch')?.addEventListener('input', renderDrugs);
+        document.getElementById('supplierSearch')?.addEventListener('input', renderSuppliers);
+
+        // Modals Open
+        document.getElementById('openCategoryCreate')?.addEventListener('click', () => toggleModal('categoryModal', true));
+        document.getElementById('openDrugCreate')?.addEventListener('click', () => toggleModal('drugModal', true));
+        document.getElementById('openSupplierCreate')?.addEventListener('click', () => toggleModal('supplierModal', true));
+
+        // Modals Close
+        document.querySelectorAll('.category-close').forEach(b => b.addEventListener('click', () => toggleModal('categoryModal', false)));
+        document.querySelectorAll('.drug-close').forEach(b => b.addEventListener('click', () => toggleModal('drugModal', false)));
+        document.querySelectorAll('.supplier-close').forEach(b => b.addEventListener('click', () => toggleModal('supplierModal', false)));
+
+        // Forms Submit
+        document.getElementById('categoryForm')?.addEventListener('submit', handleCategorySubmit);
+        document.getElementById('drugForm')?.addEventListener('submit', handleDrugSubmit);
+        document.getElementById('supplierForm')?.addEventListener('submit', handleSupplierSubmit);
+    }
+
+    function toggleModal(modalId, show) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.toggle('hidden', !show);
+    }
+
+    function handleCategorySubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('categoryId').value;
+        const name = document.getElementById('categoryName').value.trim();
+        const desc = document.getElementById('categoryDescription').value.trim();
+
+        if (id) {
+            const idx = categories.findIndex(c => (c.categoryId || c.id) === id);
+            if (idx !== -1) categories[idx] = { categoryId: id, categoryName: name, categoryDescription: desc };
+        } else {
+            categories.push({
+                categoryId: `CAT-${100 + categories.length + 1}`,
+                categoryName: name,
+                categoryDescription: desc
+            });
+        }
+
+        e.target.reset();
+        document.getElementById('categoryId').value = '';
+        toggleModal('categoryModal', false);
+        renderCategories();
+        populateCategoryDropdown();
+    }
+
+    function handleDrugSubmit(e) {
+        e.preventDefault();
+        drugs.push({
+            id: `DRUG-00${drugs.length + 1}`,
+            brandName: document.getElementById('drugBrand').value.trim(),
+            genericName: document.getElementById('drugGeneric').value.trim(),
+            categoryId: document.getElementById('drugCategory').value,
+            unitType: document.getElementById('drugUnit').value,
+            reorderLevel: parseInt(document.getElementById('drugReorder').value, 10) || 0
+        });
+
+        e.target.reset();
+        toggleModal('drugModal', false);
+        renderDrugs();
+    }
+
+    function handleSupplierSubmit(e) {
+        e.preventDefault();
+        suppliers.push({
+            id: `SUP-00${suppliers.length + 1}`,
+            name: document.getElementById('supplierName').value.trim(),
+            phone: document.getElementById('supplierPhone').value.trim(),
+            email: document.getElementById('supplierEmail').value.trim(),
+            address: document.getElementById('supplierAddress').value.trim(),
+            springMail: document.getElementById('supplierSpringMail').checked
+        });
+
+        e.target.reset();
+        toggleModal('supplierModal', false);
+        renderSuppliers();
+    }
+
+    window.editCategory = function(id) {
+        const cat = categories.find(c => (c.categoryId || c.id) === id);
+        if (!cat) return;
+
+        document.getElementById('categoryId').value = id;
+        document.getElementById('categoryName').value = cat.categoryName || cat.name;
+        document.getElementById('categoryDescription').value = cat.categoryDescription || cat.description;
+        document.getElementById('categorySubmitLabel').textContent = 'Update Category';
+
+        toggleModal('categoryModal', true);
+    };
+
+    window.deleteCategory = function(id) {
+        if (!confirm('Are you sure you want to delete this category?')) return;
+        categories = categories.filter(c => (c.categoryId || c.id) !== id);
+        renderCategories();
+        populateCategoryDropdown();
+    };
+
+    window.deleteDrug = function(id) {
+        if (!confirm('Are you sure you want to delete this drug?')) return;
+        drugs = drugs.filter(d => d.id !== id);
+        renderDrugs();
+    };
+
+    window.deleteSupplier = function(id) {
+        if (!confirm('Are you sure you want to remove this supplier?')) return;
+        suppliers = suppliers.filter(s => s.id !== id);
+        renderSuppliers();
+    };
+</script>
+</body>
+</html>

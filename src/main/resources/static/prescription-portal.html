@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jayalath Smart-Pharma Engine · Patient &amp; Doctor Prescription Portal</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    keyframes: {
+                        floatUp: { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        modalIn: { '0%': { opacity: 0, transform: 'scale(0.96) translateY(6px)' }, '100%': { opacity: 1, transform: 'scale(1) translateY(0)' } },
+                    },
+                    animation: {
+                        floatUp: 'floatUp 0.4s ease-out both',
+                        modalIn: 'modalIn 0.22s cubic-bezier(0.16,1,0.3,1) both',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .theme-track { transition: background-color 200ms ease; }
+        .theme-dot { transition: transform 200ms ease; }
+        html.dark .theme-dot { transform: translateX(1.35rem); }
+
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.35); border-radius: 999px; }
+
+        .row-fade { animation: rowIn 0.3s ease-out both; }
+        @keyframes rowIn { from { opacity: 0; background-color: rgba(20,184,166,0.08);} to { opacity: 1; } }
+
+        .dir-item { animation: floatUp 0.3s ease-out both; }
+
+        /* searchable dropdown */
+        .ss-dropdown { max-height: 240px; overflow-y: auto; }
+        .ss-dropdown::-webkit-scrollbar { width: 6px; }
+
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+        html.dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.85); }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-body transition-colors duration-200 min-h-screen">
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-[1400px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 4h4.5a3.5 3.5 0 0 1 0 7H8v9M8 11l5 9" stroke="#14b8a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="hidden sm:block leading-tight">
+                <p class="font-display font-semibold text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-teal-500">Engine</span></p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">PRESCRIPTION PORTAL</p>
+            </div>
+        </div>
+
+        <!-- 2. CENTER: NAVIGATION LINKS (EXACT MIDDLE OF MIDDLE) -->
+        <nav class="hidden lg:flex items-center justify-center gap-1 text-xs font-medium shrink-0">
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie text-[11px]"></i> Dashboard
+            </a>
+
+            <!-- Access Control (Active State) -->
+            <a href="user-access-control.html" class="px-2.5 py-1 rounded-md text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-user-shield text-[11px]"></i> Access Control
+            </a>
+
+            <!-- Inventory & Stock Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-box-archive text-[11px]"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="master-catalog-supplier.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
+                    <a href="FEFO-stock-barcode.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
+                </div>
+            </div>
+
+            <!-- Sales & Counter Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-cash-register text-[11px]"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="prescription-portal.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
+                    <a href="POS.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
+                    <a href="purchase-orders.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
+                </div>
+            </div>
+        </nav>
+
+
+        <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-11 h-6 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5 shrink-0">
+      <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+        <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
+        <i class="fa-solid fa-moon text-teal-400 text-[10px] hidden dark:inline"></i>
+      </span>
+        </button>
+    </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="max-w-[1400px] mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+    <!-- ============ PAGE HEADER ============ -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Patient &amp; Doctor Prescription Portal</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Register doctors and patients, then issue prescriptions straight through to the POS counter.</p>
+        </div>
+    </div>
+
+    <!-- ============ STATS ROW ============ -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-user-doctor"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide font-medium">Registered Doctors</p>
+                <p id="statDoctors" class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-0.5">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide font-medium">Registered Patients</p>
+                <p id="statPatients" class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-0.5">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-pills"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wide font-medium">Line Items in Current Rx</p>
+                <p id="statLineItems" class="font-display text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-0.5">0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TWO COLUMN LAYOUT ============ -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+
+        <!-- ================= LEFT: DIRECTORY ================= -->
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+            <div class="px-5 pt-5">
+                <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Doctor &amp; Patient Directory</h2>
+                <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Search the registry or quick-register a new record.</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="px-5 mt-4">
+                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/70 rounded-lg p-1 text-sm">
+                    <button id="tabDoctors" class="dir-tab flex-1 rounded-md py-2 font-medium transition-colors bg-white dark:bg-slate-900 text-teal-600 dark:text-teal-300 shadow-sm" data-tab="doctors">
+                        <i class="fa-solid fa-user-doctor mr-1.5"></i>Doctors
+                    </button>
+                    <button id="tabPatients" class="dir-tab flex-1 rounded-md py-2 font-medium transition-colors text-slate-500 dark:text-slate-400" data-tab="patients">
+                        <i class="fa-solid fa-user mr-1.5"></i>Patients
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search + Register -->
+            <div class="px-5 mt-4 flex items-center gap-2">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input id="dirSearch" type="text" placeholder="Search directory…"
+                           class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+                <button id="btnOpenDoctorModal" class="dir-register-btn hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-300 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 rounded-lg px-3 py-2.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-user-plus"></i> New
+                </button>
+            </div>
+
+            <!-- List -->
+            <div id="dirList" class="px-5 py-4 space-y-2 max-h-[560px] overflow-y-auto"></div>
+            <div id="dirEmpty" class="hidden px-5 pb-6 text-center text-sm text-slate-400 dark:text-slate-500">
+                <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i> No records found.
+            </div>
+        </div>
+
+        <!-- ================= RIGHT: PRESCRIPTION ENGINE ================= -->
+        <div class="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div class="px-5 lg:px-6 pt-5 flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Prescription Entry Engine</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Build the prescription, then forward the line items to the POS counter.</p>
+                </div>
+                <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1" id="rxNoBadge">RX-000001</span>
+            </div>
+
+            <div class="px-5 lg:px-6 py-5 space-y-5">
+
+                <!-- Doctor / Patient selectors -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Doctor</label>
+                        <div id="doctorSelect" class="searchable-select relative mt-1.5">
+                            <div class="relative">
+                                <i class="fa-solid fa-user-doctor absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="text" class="ss-input w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-8 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" placeholder="Search doctor by name or SLMC no…" autocomplete="off">
+                                <input type="hidden" class="ss-value">
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-300 text-xs pointer-events-none"></i>
+                            </div>
+                            <div class="ss-dropdown hidden absolute z-30 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1.5"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Patient</label>
+                        <div id="patientSelect" class="searchable-select relative mt-1.5">
+                            <div class="relative">
+                                <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                                <input type="text" class="ss-input w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-8 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" placeholder="Search patient by name or NIC…" autocomplete="off">
+                                <input type="hidden" class="ss-value">
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-300 text-xs pointer-events-none"></i>
+                            </div>
+                            <div class="ss-dropdown hidden absolute z-30 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1.5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issued date / Remarks -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Issued Date</label>
+                        <div class="relative mt-1.5">
+                            <i class="fa-solid fa-calendar-days absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input id="issuedDate" type="date" class="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-3.5 py-2.5 text-sm outline-none transition-colors" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Remarks</label>
+                        <input id="remarks" type="text" placeholder="e.g. Take after meals, review in 7 days…"
+                               class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                    </div>
+                </div>
+
+                <!-- Line items -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Drug Line Items</label>
+                        <button id="btnAddLine" type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-300 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 rounded-lg px-3 py-2 transition-colors">
+                            <i class="fa-solid fa-plus"></i> Add Drug
+                        </button>
+                    </div>
+
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm min-w-[640px]">
+                                <thead>
+                                <tr class="text-left text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+                                    <th class="px-3.5 py-2.5 font-medium w-[30%]">Drug</th>
+                                    <th class="px-2 py-2.5 font-medium w-[22%]">Dosage</th>
+                                    <th class="px-2 py-2.5 font-medium w-[20%]">Frequency</th>
+                                    <th class="px-2 py-2.5 font-medium w-[16%]">Duration (days)</th>
+                                    <th class="px-2 py-2.5 font-medium w-[6%] text-right"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="lineItemsBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="lineItemsEmpty" class="px-5 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
+                            <i class="fa-solid fa-mortar-pestle text-2xl mb-2 block"></i> No drugs added yet — click "Add Drug" to begin.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer action -->
+            <div class="px-5 lg:px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p id="formStatus" class="text-xs text-slate-400 dark:text-slate-500"><i class="fa-regular fa-circle-check mr-1"></i>Select a doctor, patient and at least one drug to continue.</p>
+                <button id="btnForwardPOS" type="button" class="inline-flex items-center gap-2 text-sm font-semibold text-white bg-teal-500 hover:bg-teal-600 active:bg-teal-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg px-4 py-2.5 transition-colors shadow-sm shadow-teal-500/20 w-full sm:w-auto justify-center" disabled>
+                    <i class="fa-solid fa-cash-register"></i> Forward to POS Counter
+                </button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ============ DOCTOR REGISTRATION MODAL ============ -->
+<div id="doctorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="modal-overlay absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md animate-modalIn">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 text-teal-500 flex items-center justify-center"><i class="fa-solid fa-user-doctor"></i></div>
+                <h3 class="font-display font-semibold text-slate-900 dark:text-slate-50">Register Doctor</h3>
+            </div>
+            <button class="modal-close text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-lg" data-target="doctorModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="doctorForm" class="px-5 py-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">SLMC Reg. No.</label>
+                <input required id="docSlmc" type="text" placeholder="e.g. SLMC 24871" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <div>
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</label>
+                <input required id="docName" type="text" placeholder="e.g. Dr. N. Wickramasinghe" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <div>
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Hospital / Clinic</label>
+                <input required id="docHospital" type="text" placeholder="e.g. Asiri Central Hospital" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button type="button" class="modal-close flex-1 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg px-4 py-2.5 transition-colors" data-target="doctorModal">Cancel</button>
+                <button type="submit" class="flex-1 text-sm font-semibold text-white bg-teal-500 hover:bg-teal-600 rounded-lg px-4 py-2.5 transition-colors"><i class="fa-solid fa-check mr-1"></i> Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ PATIENT REGISTRATION MODAL ============ -->
+<div id="patientModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="modal-overlay absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md animate-modalIn">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 flex items-center justify-center"><i class="fa-solid fa-user"></i></div>
+                <h3 class="font-display font-semibold text-slate-900 dark:text-slate-50">Register Patient</h3>
+            </div>
+            <button class="modal-close text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-lg" data-target="patientModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="patientForm" class="px-5 py-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">NIC / Passport No.</label>
+                <input required id="patNic" type="text" placeholder="e.g. 200145678912 or N1234567" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <div>
+                <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</label>
+                <input required id="patName" type="text" placeholder="e.g. W. M. Silva" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone</label>
+                    <input required id="patPhone" type="tel" placeholder="07X XXXXXXX" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+                <div>
+                    <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email</label>
+                    <input id="patEmail" type="email" placeholder="optional" class="w-full mt-1.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-slate-400" />
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button type="button" class="modal-close flex-1 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg px-4 py-2.5 transition-colors" data-target="patientModal">Cancel</button>
+                <button type="submit" class="flex-1 text-sm font-semibold text-white bg-cyan-500 hover:bg-cyan-600 rounded-lg px-4 py-2.5 transition-colors"><i class="fa-solid fa-check mr-1"></i> Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-[60] animate-floatUp">
+    <div class="flex items-center gap-3 bg-slate-900 dark:bg-slate-800 text-white text-sm rounded-xl shadow-lg px-4 py-3 border border-slate-700">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-teal-400"></i>
+        <span id="toastMsg">Saved.</span>
+    </div>
+</div>
+
+<script>
+    /* ============ THEME TOGGLE ============ */
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('spe_theme') === 'dark' || (!localStorage.getItem('spe_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.classList.add('dark');
+    }
+    themeToggle.addEventListener('click', () => {
+        root.classList.toggle('dark');
+        localStorage.setItem('spe_theme', root.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    /* ============ TOAST HELPER ============ */
+    let toastTimer;
+    function showToast(msg, icon = 'fa-circle-check', color = 'text-teal-400') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        const iconEl = document.getElementById('toastIcon');
+        iconEl.className = `fa-solid ${icon} ${color}`;
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.add('hidden'), 2600);
+    }
+
+    /* ============ SEED DATA ============ */
+    let doctors = [
+        { id: 'DOC-1001', slmc: 'SLMC 18452', name: 'Dr. A. K. Perera', hospital: 'National Hospital Colombo' },
+        { id: 'DOC-1002', slmc: 'SLMC 21930', name: 'Dr. S. Jayasuriya', hospital: 'Asiri Central Hospital' },
+        { id: 'DOC-1003', slmc: 'SLMC 19754', name: 'Dr. N. Fernando', hospital: 'Nawaloka Hospital' },
+        { id: 'DOC-1004', slmc: 'SLMC 24810', name: 'Dr. R. Wickramasinghe', hospital: 'Durdans Hospital' },
+    ];
+
+    let patients = [
+        { id: 'PAT-2001', nic: '912345678V', name: 'K. D. Fernando', phone: '0771234567', email: 'k.fernando@gmail.com' },
+        { id: 'PAT-2002', nic: '200145678912', name: 'W. M. Silva', phone: '0759876543', email: 'wm.silva@gmail.com' },
+        { id: 'PAT-2003', nic: '885678123V', name: 'T. R. Jayawardena', phone: '0713456789', email: '' },
+        { id: 'PAT-2004', nic: 'N4521789', name: 'P. Amarasekara (Passport)', phone: '0765551234', email: 'p.amara@yahoo.com' },
+    ];
+
+    const drugs = [
+        { id: 'RX-01', name: 'Paracetamol 500mg Tab', price: 5.00 },
+        { id: 'RX-02', name: 'Amoxicillin 250mg Cap', price: 12.50 },
+        { id: 'RX-03', name: 'Cetirizine 10mg Tab', price: 8.00 },
+        { id: 'RX-04', name: 'Omeprazole 20mg Cap', price: 15.00 },
+        { id: 'RX-05', name: 'Metformin 500mg Tab', price: 6.50 },
+        { id: 'RX-06', name: 'Amlodipine 5mg Tab', price: 9.00 },
+        { id: 'RX-07', name: 'Salbutamol Inhaler', price: 450.00 },
+        { id: 'RX-08', name: 'Ibuprofen 400mg Tab', price: 7.00 },
+        { id: 'RX-09', name: 'Losartan 50mg Tab', price: 14.00 },
+        { id: 'RX-10', name: 'Vitamin B Complex Tab', price: 4.00 },
+    ];
+
+    const FREQ_OPTIONS = [
+        { code: 'OD', label: 'OD — Once daily', mult: 1 },
+        { code: 'BD', label: 'BD — Twice daily', mult: 2 },
+        { code: 'TDS', label: 'TDS — Three times daily', mult: 3 },
+        { code: 'QID', label: 'QID — Four times daily', mult: 4 },
+        { code: 'NOCTE', label: 'Nocte — At night', mult: 1 },
+        { code: 'STAT', label: 'Stat — Immediately', mult: 1 },
+        { code: 'PRN', label: 'PRN — As needed', mult: 1 },
+    ];
+
+    let doctorSeq = doctors.length;
+    let patientSeq = patients.length;
+    let lineSeq = 0;
+    let selectedDoctor = null;
+    let selectedPatient = null;
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
+
+    function initials(name) {
+        return name.replace(/^Dr\.?\s*/i, '').split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    }
+
+    /* ============ GENERIC MODAL HANDLING ============ */
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.target)));
+    document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', (e) => {
+        const wrapper = e.target.closest('[id$="Modal"]');
+        if (wrapper) closeModal(wrapper.id);
+    }));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(m => closeModal(m.id));
+        }
+    });
+
+    document.getElementById('btnOpenDoctorModal').addEventListener('click', () => {
+        if (currentTab === 'patients') { openModal('patientModal'); return; }
+        openModal('doctorModal');
+    });
+
+    /* ============ DOCTOR REGISTRATION ============ */
+    document.getElementById('doctorForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        doctorSeq += 1;
+        const doc = {
+            id: 'DOC-' + (1000 + doctorSeq),
+            slmc: document.getElementById('docSlmc').value.trim(),
+            name: document.getElementById('docName').value.trim(),
+            hospital: document.getElementById('docHospital').value.trim(),
+        };
+        doctors.push(doc);
+        e.target.reset();
+        closeModal('doctorModal');
+        renderStats();
+        renderDirectory();
+        showToast(`Doctor "${doc.name}" registered.`);
+    });
+
+    /* ============ PATIENT REGISTRATION ============ */
+    document.getElementById('patientForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        patientSeq += 1;
+        const pat = {
+            id: 'PAT-' + (2000 + patientSeq),
+            nic: document.getElementById('patNic').value.trim(),
+            name: document.getElementById('patName').value.trim(),
+            phone: document.getElementById('patPhone').value.trim(),
+            email: document.getElementById('patEmail').value.trim(),
+        };
+        patients.push(pat);
+        e.target.reset();
+        closeModal('patientModal');
+        renderStats();
+        renderDirectory();
+        showToast(`Patient "${pat.name}" registered.`);
+    });
+
+    /* ============ DIRECTORY (LEFT COLUMN) ============ */
+    let currentTab = 'doctors';
+    const dirList = document.getElementById('dirList');
+    const dirEmpty = document.getElementById('dirEmpty');
+    const dirSearch = document.getElementById('dirSearch');
+
+    function setTab(tab) {
+        currentTab = tab;
+        document.getElementById('tabDoctors').className = 'dir-tab flex-1 rounded-md py-2 font-medium transition-colors ' + (tab === 'doctors' ? 'bg-white dark:bg-slate-900 text-teal-600 dark:text-teal-300 shadow-sm' : 'text-slate-500 dark:text-slate-400');
+        document.getElementById('tabPatients').className = 'dir-tab flex-1 rounded-md py-2 font-medium transition-colors ' + (tab === 'patients' ? 'bg-white dark:bg-slate-900 text-teal-600 dark:text-teal-300 shadow-sm' : 'text-slate-500 dark:text-slate-400');
+        dirSearch.placeholder = tab === 'doctors' ? 'Search by name or SLMC no…' : 'Search by name or NIC…';
+        renderDirectory();
+    }
+    document.getElementById('tabDoctors').addEventListener('click', () => setTab('doctors'));
+    document.getElementById('tabPatients').addEventListener('click', () => setTab('patients'));
+    dirSearch.addEventListener('input', renderDirectory);
+
+    function renderDirectory() {
+        const q = dirSearch.value.trim().toLowerCase();
+        if (currentTab === 'doctors') {
+            const filtered = doctors.filter(d => !q || d.name.toLowerCase().includes(q) || d.slmc.toLowerCase().includes(q) || d.hospital.toLowerCase().includes(q));
+            dirEmpty.classList.toggle('hidden', filtered.length !== 0);
+            dirList.innerHTML = filtered.map(d => `
+        <button type="button" data-id="${d.id}" class="dir-item pick-doctor w-full flex items-center gap-3 text-left bg-slate-50 dark:bg-slate-800/50 hover:bg-teal-500/10 border border-slate-200 dark:border-slate-700 hover:border-teal-500/40 rounded-xl px-3.5 py-3 transition-colors">
+          <div class="w-9 h-9 rounded-full bg-teal-500/15 text-teal-600 dark:text-teal-300 flex items-center justify-center font-display text-xs font-semibold shrink-0">${initials(d.name)}</div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">${escapeHtml(d.name)}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 truncate">${escapeHtml(d.hospital)}</p>
+          </div>
+          <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">${escapeHtml(d.slmc)}</span>
+        </button>`).join('');
+        } else {
+            const filtered = patients.filter(p => !q || p.name.toLowerCase().includes(q) || p.nic.toLowerCase().includes(q) || (p.phone || '').includes(q));
+            dirEmpty.classList.toggle('hidden', filtered.length !== 0);
+            dirList.innerHTML = filtered.map(p => `
+        <button type="button" data-id="${p.id}" class="dir-item pick-patient w-full flex items-center gap-3 text-left bg-slate-50 dark:bg-slate-800/50 hover:bg-cyan-500/10 border border-slate-200 dark:border-slate-700 hover:border-cyan-500/40 rounded-xl px-3.5 py-3 transition-colors">
+          <div class="w-9 h-9 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 flex items-center justify-center font-display text-xs font-semibold shrink-0">${initials(p.name)}</div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">${escapeHtml(p.name)}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 truncate">${escapeHtml(p.phone)}${p.email ? ' · ' + escapeHtml(p.email) : ''}</p>
+          </div>
+          <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">${escapeHtml(p.nic)}</span>
+        </button>`).join('');
+        }
+    }
+
+    dirList.addEventListener('click', (e) => {
+        const dBtn = e.target.closest('.pick-doctor');
+        const pBtn = e.target.closest('.pick-patient');
+        if (dBtn) {
+            const doc = doctors.find(x => x.id === dBtn.dataset.id);
+            if (doc) selectDoctor(doc);
+        }
+        if (pBtn) {
+            const pat = patients.find(x => x.id === pBtn.dataset.id);
+            if (pat) selectPatient(pat);
+        }
+    });
+
+    /* ============ GENERIC SEARCHABLE SELECT ============ */
+    function bindSearchableSelect(wrapper, getItems, renderItem, labelFor, onPick) {
+        const input = wrapper.querySelector('.ss-input');
+        const hidden = wrapper.querySelector('.ss-value');
+        const dropdown = wrapper.querySelector('.ss-dropdown');
+
+        function renderList(query) {
+            const q = (query || '').trim().toLowerCase();
+            const items = getItems().filter(it => !q || labelFor(it).toLowerCase().includes(q));
+            if (items.length === 0) {
+                dropdown.innerHTML = `<p class="px-3.5 py-3 text-xs text-slate-400 dark:text-slate-500">No matches found.</p>`;
+            } else {
+                dropdown.innerHTML = items.map(it => renderItem(it)).join('');
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        input.addEventListener('focus', () => renderList(input.value));
+        input.addEventListener('input', () => { hidden.value = ''; renderList(input.value); });
+
+        dropdown.addEventListener('click', (e) => {
+            const opt = e.target.closest('.ss-option');
+            if (!opt) return;
+            const items = getItems();
+            const item = items.find(it => String(it.id) === opt.dataset.id);
+            if (!item) return;
+            hidden.value = item.id;
+            input.value = labelFor(item);
+            dropdown.classList.add('hidden');
+            onPick(item);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) dropdown.classList.add('hidden');
+        });
+
+        return {
+            setValue(item) {
+                hidden.value = item ? item.id : '';
+                input.value = item ? labelFor(item) : '';
+            }
+        };
+    }
+
+    /* ============ DOCTOR / PATIENT MAIN FORM SELECTORS ============ */
+    const doctorSelectWrapper = document.getElementById('doctorSelect');
+    const doctorSelectCtl = bindSearchableSelect(
+        doctorSelectWrapper,
+        () => doctors,
+        (d) => `<button type="button" class="ss-option w-full flex items-center gap-2.5 text-left px-3.5 py-2.5 hover:bg-teal-500/10 transition-colors" data-id="${d.id}">
+              <div class="w-7 h-7 rounded-full bg-teal-500/15 text-teal-600 dark:text-teal-300 flex items-center justify-center font-display text-[10px] font-semibold shrink-0">${initials(d.name)}</div>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm text-slate-800 dark:text-slate-100 truncate">${escapeHtml(d.name)}</span>
+                <span class="block text-[11px] text-slate-400 dark:text-slate-500 truncate">${escapeHtml(d.hospital)} · ${escapeHtml(d.slmc)}</span>
+              </span>
+            </button>`,
+        (d) => d.name,
+        (d) => selectDoctor(d)
+    );
+
+    const patientSelectWrapper = document.getElementById('patientSelect');
+    const patientSelectCtl = bindSearchableSelect(
+        patientSelectWrapper,
+        () => patients,
+        (p) => `<button type="button" class="ss-option w-full flex items-center gap-2.5 text-left px-3.5 py-2.5 hover:bg-cyan-500/10 transition-colors" data-id="${p.id}">
+              <div class="w-7 h-7 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 flex items-center justify-center font-display text-[10px] font-semibold shrink-0">${initials(p.name)}</div>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm text-slate-800 dark:text-slate-100 truncate">${escapeHtml(p.name)}</span>
+                <span class="block text-[11px] text-slate-400 dark:text-slate-500 truncate">${escapeHtml(p.nic)} · ${escapeHtml(p.phone)}</span>
+              </span>
+            </button>`,
+        (p) => p.name,
+        (p) => selectPatient(p)
+    );
+
+    function selectDoctor(doc) {
+        selectedDoctor = doc;
+        doctorSelectCtl.setValue(doc);
+        setTab('doctors');
+        dirSearch.value = '';
+        renderDirectory();
+        updateFormStatus();
+    }
+    function selectPatient(pat) {
+        selectedPatient = pat;
+        patientSelectCtl.setValue(pat);
+        setTab('patients');
+        dirSearch.value = '';
+        renderDirectory();
+        updateFormStatus();
+    }
+
+    /* ============ ISSUED DATE DEFAULT ============ */
+    const issuedDateInput = document.getElementById('issuedDate');
+    issuedDateInput.value = new Date().toISOString().slice(0, 10);
+
+    /* ============ DYNAMIC LINE ITEMS TABLE ============ */
+    const lineItemsBody = document.getElementById('lineItemsBody');
+    const lineItemsEmpty = document.getElementById('lineItemsEmpty');
+    const lineItems = new Map(); // rowId -> { drugId, drugName, dosage, freqCode, duration }
+
+    function addLineRow() {
+        lineSeq += 1;
+        const rowId = 'line-' + lineSeq;
+        lineItems.set(rowId, { drugId: '', drugName: '', dosage: '', freqCode: '', duration: '' });
+
+        const tr = document.createElement('tr');
+        tr.className = 'row-fade border-b border-slate-100 dark:border-slate-800 last:border-0 align-top';
+        tr.dataset.rowId = rowId;
+        tr.innerHTML = `
+      <td class="px-3.5 py-2.5">
+        <div class="searchable-select drug-select relative">
+          <div class="relative">
+            <input type="text" class="ss-input w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-3 pr-7 py-2 text-sm outline-none transition-colors placeholder:text-slate-400" placeholder="Search drug…" autocomplete="off">
+            <input type="hidden" class="ss-value">
+            <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-300 text-[10px] pointer-events-none"></i>
+          </div>
+          <div class="ss-dropdown hidden absolute z-30 mt-1.5 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1.5"></div>
+        </div>
+      </td>
+      <td class="px-2 py-2.5">
+        <input type="text" class="line-dosage w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3 py-2 text-sm outline-none transition-colors placeholder:text-slate-400" placeholder="e.g. 1 tab">
+      </td>
+      <td class="px-2 py-2.5">
+        <select class="line-freq w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors">
+          <option value="">Frequency…</option>
+          ${FREQ_OPTIONS.map(f => `<option value="${f.code}">${f.label}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-2 py-2.5">
+        <input type="number" min="1" class="line-duration w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg px-3 py-2 text-sm outline-none transition-colors placeholder:text-slate-400" placeholder="Days">
+      </td>
+      <td class="px-2 py-2.5 text-right">
+        <button type="button" class="remove-line w-8 h-8 inline-flex items-center justify-center rounded-lg text-rose-500 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-colors">
+          <i class="fa-solid fa-trash-can text-xs"></i>
+        </button>
+      </td>`;
+        lineItemsBody.appendChild(tr);
+
+        // bind drug searchable select for this row
+        const drugWrapper = tr.querySelector('.drug-select');
+        bindSearchableSelect(
+            drugWrapper,
+            () => drugs,
+            (d) => `<button type="button" class="ss-option w-full flex items-center justify-between gap-2 text-left px-3.5 py-2.5 hover:bg-teal-500/10 transition-colors" data-id="${d.id}">
+                <span class="text-sm text-slate-800 dark:text-slate-100 truncate">${escapeHtml(d.name)}</span>
+                <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">Rs. ${d.price.toFixed(2)}</span>
+              </button>`,
+            (d) => d.name,
+            (d) => {
+                const item = lineItems.get(rowId);
+                item.drugId = d.id;
+                item.drugName = d.name;
+                updateFormStatus();
+            }
+        );
+
+        tr.querySelector('.line-dosage').addEventListener('input', (e) => { lineItems.get(rowId).dosage = e.target.value; updateFormStatus(); });
+        tr.querySelector('.line-freq').addEventListener('change', (e) => { lineItems.get(rowId).freqCode = e.target.value; updateFormStatus(); });
+        tr.querySelector('.line-duration').addEventListener('input', (e) => { lineItems.get(rowId).duration = e.target.value; updateFormStatus(); });
+        tr.querySelector('.remove-line').addEventListener('click', () => {
+            lineItems.delete(rowId);
+            tr.remove();
+            updateFormStatus();
+        });
+
+        updateFormStatus();
+    }
+    document.getElementById('btnAddLine').addEventListener('click', addLineRow);
+
+    /* ============ FORM STATUS / VALIDATION ============ */
+    const btnForwardPOS = document.getElementById('btnForwardPOS');
+    const formStatus = document.getElementById('formStatus');
+
+    function completeLineItems() {
+        return [...lineItems.values()].filter(li => li.drugId && li.dosage.trim() && li.freqCode && li.duration && Number(li.duration) > 0);
+    }
+
+    function updateFormStatus() {
+        lineItemsEmpty.classList.toggle('hidden', lineItems.size !== 0);
+        document.getElementById('statLineItems').textContent = lineItems.size;
+
+        const complete = completeLineItems();
+        const ready = !!selectedDoctor && !!selectedPatient && complete.length > 0;
+        btnForwardPOS.disabled = !ready;
+
+        if (!selectedDoctor || !selectedPatient) {
+            formStatus.innerHTML = `<i class="fa-regular fa-circle-check mr-1"></i>Select a doctor, patient and at least one drug to continue.`;
+        } else if (complete.length === 0) {
+            formStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1 text-amber-500"></i>Complete at least one drug line (drug, dosage, frequency, duration).`;
+        } else {
+            formStatus.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-teal-500"></i>${complete.length} drug${complete.length > 1 ? 's' : ''} ready for ${escapeHtml(selectedPatient.name)}.`;
+        }
+    }
+
+    /* ============ FORWARD TO POS COUNTER ============ */
+    btnForwardPOS.addEventListener('click', () => {
+        const complete = completeLineItems();
+        if (!selectedDoctor || !selectedPatient || complete.length === 0) return;
+
+        const rxId = 'RX-' + Date.now().toString().slice(-8);
+
+        const cartItems = complete.map(li => {
+            const drug = drugs.find(d => d.id === li.drugId);
+            const freq = FREQ_OPTIONS.find(f => f.code === li.freqCode);
+            const qty = Math.max(1, (freq ? freq.mult : 1) * Number(li.duration));
+            return {
+                id: li.drugId,
+                name: li.drugName,
+                dosage: li.dosage,
+                frequency: freq ? freq.label : li.freqCode,
+                durationDays: Number(li.duration),
+                qty,
+                unitPrice: drug ? drug.price : 0,
+                lineTotal: Number(((drug ? drug.price : 0) * qty).toFixed(2)),
+            };
+        });
+
+        const cartMeta = {
+            rxId,
+            issuedDate: issuedDateInput.value,
+            remarks: document.getElementById('remarks').value.trim(),
+            doctor: { ...selectedDoctor },
+            patient: { ...selectedPatient },
+            source: 'prescription-portal',
+            createdAt: new Date().toISOString(),
+        };
+
+        try {
+            localStorage.setItem('posCart', JSON.stringify(cartItems));
+            localStorage.setItem('posCartMeta', JSON.stringify(cartMeta));
+            showToast(`Prescription ${rxId} forwarded to POS Counter…`);
+            setTimeout(() => { window.location.href = 'pos.html'; }, 700);
+        } catch (err) {
+            console.error('Failed to forward to POS:', err);
+            showToast('Could not forward to POS Counter.', 'fa-triangle-exclamation', 'text-rose-400');
+        }
+    });
+
+    /* ============ STATS ============ */
+    function renderStats() {
+        document.getElementById('statDoctors').textContent = doctors.length;
+        document.getElementById('statPatients').textContent = patients.length;
+    }
+
+    /* ============ INIT ============ */
+    renderStats();
+    renderDirectory();
+    addLineRow();
+    updateFormStatus();
+</script>
+</body>
+</html>

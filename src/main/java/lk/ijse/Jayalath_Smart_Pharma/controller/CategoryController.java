@@ -11,7 +11,8 @@ import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseCode.OPERATION_SUCC
 import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage.SUCCESS_MESSAGE;
 
 @RestController
-@RequestMapping("api/v1/categories")
+@RequestMapping("/api/v1/categories")
+@CrossOrigin
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -20,29 +21,33 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/saveCategories")
+    @PostMapping
     public CommonResponse saveCategory(@RequestBody CategoryDTO categoryDTO) {
         categoryService.saveCategory(categoryDTO);
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
-    @GetMapping("/getAllCategories")
+
+    @GetMapping
     public CommonResponse getAllCategories() {
         List<CategoryDTO> categoryList = categoryService.getAllCategories();
-        return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryList);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, categoryList);
     }
+
     @GetMapping("/{categoryId}")
     public CommonResponse getCategoryById(@PathVariable Long categoryId) {
         CategoryDTO categoryDTO = categoryService.getCategoryById(categoryId);
-        return new CommonResponse(OPERATION_SUCCESS ,SUCCESS_MESSAGE,categoryDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE, categoryDTO);
     }
-    @DeleteMapping("/deleteCategories")
-    public CommonResponse deleteCategoryById(@RequestParam Long categoryId) {
+
+    @DeleteMapping("/{categoryId}")
+    public CommonResponse deleteCategoryById(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
-        return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
+
     @PutMapping("/{categoryId}")
-    public CommonResponse updateCategory(@PathVariable Long categoryId,@RequestBody CategoryDTO categoryDTO) {
-        categoryService.updateCategory(categoryId,categoryDTO);
-        return new CommonResponse(OPERATION_SUCCESS,SUCCESS_MESSAGE);
+    public CommonResponse updateCategory(@PathVariable Long categoryId, @RequestBody CategoryDTO categoryDTO) {
+        categoryService.updateCategory(categoryId, categoryDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 }

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jayalath Smart-Pharma Engine · Purchase Orders</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    keyframes: {
+                        floatUp: { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        modalIn: { '0%': { opacity: 0, transform: 'scale(0.96) translateY(6px)' }, '100%': { opacity: 1, transform: 'scale(1) translateY(0)' } },
+                        pulseDot: { '0%,100%': { opacity: 1 }, '50%': { opacity: 0.35 } },
+                        spin: { to: { transform: 'rotate(360deg)' } },
+                    },
+                    animation: {
+                        floatUp: 'floatUp 0.4s ease-out both',
+                        modalIn: 'modalIn 0.22s cubic-bezier(0.16,1,0.3,1) both',
+                        pulseDot: 'pulseDot 1.8s ease-in-out infinite',
+                        spinSlow: 'spin 0.7s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .theme-track { transition: background-color 200ms ease; }
+        .theme-dot { transition: transform 200ms ease; }
+        html.dark .theme-dot { transform: translateX(1.35rem); }
+
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.35); border-radius: 999px; }
+
+        .row-fade { animation: rowIn 0.3s ease-out both; }
+        @keyframes rowIn { from { opacity: 0; background-color: rgba(20,184,166,0.08);} to { opacity: 1; } }
+
+        .card-pop { animation: floatUp 0.3s ease-out both; }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-body transition-colors duration-200 min-h-screen">
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 4h4.5a3.5 3.5 0 0 1 0 7H8v9M8 11l5 9" stroke="#14b8a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="hidden sm:block leading-tight">
+                <p class="font-display font-semibold text-sm text-slate-900 dark:text-slate-50 tracking-tight">Jayalath Smart-Pharma <span class="text-teal-500">Engine</span></p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">PURCHASE ORDER &amp; MAIL DISPATCH</p>
+            </div>
+        </div>
+
+        <!-- 2. CENTER: NAVIGATION LINKS (EXACT MIDDLE OF MIDDLE) -->
+        <nav class="hidden lg:flex items-center justify-center gap-1 text-xs font-medium shrink-0">
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-chart-pie text-[11px]"></i> Dashboard
+            </a>
+
+            <!-- Access Control (Active State) -->
+            <a href="user-access-control.html" class="px-2.5 py-1 rounded-md text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-user-shield text-[11px]"></i> Access Control
+            </a>
+
+            <!-- Inventory & Stock Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-box-archive text-[11px]"></i> Inventory &amp; Stock <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="master-catalog-supplier.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Master Catalog &amp; Suppliers</a>
+                    <a href="FEFO-stock-barcode.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-barcode"></i> FEFO Inventory &amp; Barcode</a>
+                </div>
+            </div>
+
+            <!-- Sales & Counter Dropdown -->
+            <div class="relative group">
+                <button class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 flex items-center gap-1.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-cash-register text-[11px]"></i> Sales &amp; Counter <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+                </button>
+                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 w-52 bg-slate-900 border border-slate-800 rounded-xl shadow-xl py-2 hidden group-hover:block z-50">
+                    <a href="prescription-portal.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-file-prescription"></i> Prescription Portal</a>
+                    <a href="POS.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-calculator"></i> POS Billing Counter</a>
+                    <a href="purchase-orders.html" class="px-3.5 py-1.5 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="hidden sm:flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <div class="w-8 h-8 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 flex items-center justify-center font-display text-xs font-semibold">RD</div>
+                <div class="leading-tight">
+                    <p class="text-slate-700 dark:text-slate-200 font-medium text-xs">R. Dissanayake</p>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Procurement Officer</p>
+                </div>
+            </div>
+            <button id="themeToggle" aria-label="Toggle dark mode" class="relative w-11 h-6 rounded-full bg-slate-200 dark:bg-slate-700 theme-track flex items-center px-0.5 shrink-0">
+        <span class="theme-dot w-5 h-5 rounded-full bg-white dark:bg-slate-900 shadow flex items-center justify-center">
+          <i class="fa-solid fa-sun text-amber-400 text-[10px] dark:hidden"></i>
+          <i class="fa-solid fa-moon text-teal-400 text-[10px] hidden dark:inline"></i>
+        </span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="max-w-[1500px] mx-auto px-5 lg:px-8 py-6 space-y-6">
+
+    <!-- Page intro / stat strip -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+            <h1 class="font-display text-xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Automated Purchase Order &amp; Spring Mail Dispatch</h1>
+            <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">Auto-detect low stock, raise a PO, and dispatch it to the supplier via the Spring Mail service — end to end.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-center">
+                <p id="statLowStock" class="font-display font-semibold text-lg text-rose-500 leading-none">0</p>
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide mt-1">Low Stock</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-center">
+                <p id="statDraft" class="font-display font-semibold text-lg text-slate-500 dark:text-slate-300 leading-none">0</p>
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide mt-1">Draft POs</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-center">
+                <p id="statSent" class="font-display font-semibold text-lg text-teal-500 leading-none">0</p>
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide mt-1">Sent</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= LOW-STOCK AUTO ALERT ================= -->
+    <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div class="px-5 pt-5 pb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-500 text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50 tracking-tight">Low-Stock Auto Alert</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500">Items where Quantity On Hand ≤ Reorder Level.</p>
+                </div>
+            </div>
+            <button id="selectAllLowStock" type="button" class="text-xs font-medium text-teal-600 dark:text-teal-300 hover:text-teal-700 dark:hover:text-teal-200 transition-colors border border-teal-500/30 bg-teal-500/10 rounded-lg px-3 py-1.5">
+                <i class="fa-solid fa-square-check mr-1.5"></i>Select All for PO
+            </button>
+        </div>
+        <div id="lowStockGrid" class="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+        <div id="lowStockEmpty" class="hidden px-5 pb-8 text-center text-sm text-slate-400 dark:text-slate-500">
+            <i class="fa-solid fa-circle-check text-2xl mb-2 block text-emerald-500"></i> All stock levels are healthy — nothing to reorder.
+        </div>
+    </section>
+
+    <!-- Two column: PO form + audit log -->
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-6 items-start">
+
+        <!-- ================= PO GENERATION FORM ================= -->
+        <div class="xl:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+            <div class="px-5 pt-5 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50 tracking-tight">New Purchase Order</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Select items, confirm quantities, then approve &amp; send.</p>
+                </div>
+                <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1" id="poNumberBadge">PO-000001</span>
+            </div>
+
+            <div class="px-5 pb-5 space-y-4">
+                <!-- Supplier dropdown -->
+                <div>
+                    <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Supplier</label>
+                    <div class="relative mt-1.5">
+                        <i class="fa-solid fa-truck-field absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <select id="supplierSelect" class="w-full appearance-none bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg pl-10 pr-8 py-2.5 text-sm outline-none transition-colors">
+                            <option value="">Select a supplier…</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-300 text-xs pointer-events-none"></i>
+                    </div>
+                    <p id="supplierEmailHint" class="hidden text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 items-center gap-1.5">
+                        <i class="fa-solid fa-envelope text-teal-500"></i> Will be sent to <span id="supplierEmailText" class="font-mono text-slate-500 dark:text-slate-400"></span>
+                    </p>
+                </div>
+
+                <!-- Item selection table -->
+                <div>
+                    <label class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Items</label>
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden mt-1.5">
+                        <div class="overflow-x-auto max-h-[300px] overflow-y-auto">
+                            <table class="w-full text-sm min-w-[560px]">
+                                <thead class="sticky top-0 bg-slate-50/95 dark:bg-slate-800/90 backdrop-blur">
+                                <tr class="text-left text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800">
+                                    <th class="px-3.5 py-2.5 font-medium w-8"></th>
+                                    <th class="px-2 py-2.5 font-medium">Item</th>
+                                    <th class="px-2 py-2.5 font-medium text-center">On Hand</th>
+                                    <th class="px-2 py-2.5 font-medium text-center">Reorder Lvl</th>
+                                    <th class="px-2 py-2.5 font-medium text-center w-28">Qty Requested</th>
+                                    <th class="px-2 py-2.5 font-medium text-right">Unit Cost</th>
+                                    <th class="px-3.5 py-2.5 font-medium text-right">Line Total</th>
+                                </tr>
+                                </thead>
+                                <tbody id="poItemsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimated cost calculator -->
+                <div class="space-y-1.5 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5">
+                    <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                        <span>Items Selected</span>
+                        <span id="calcItemCount" class="font-mono">0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                        <span>Total Units Requested</span>
+                        <span id="calcUnitCount" class="font-mono">0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-base font-display font-semibold text-slate-900 dark:text-slate-50 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <span>Estimated Cost</span>
+                        <span id="calcTotal" class="font-mono">Rs. 0.00</span>
+                    </div>
+                </div>
+
+                <!-- Action trigger -->
+                <div class="flex flex-col sm:flex-row items-stretch gap-2.5 pt-1">
+                    <button id="btnSaveDraft" type="button"
+                            class="flex-1 inline-flex items-center justify-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg px-4 py-3 transition-colors">
+                        <i class="fa-regular fa-floppy-disk"></i> Save as Draft
+                    </button>
+                    <button id="btnApproveSend" type="button" disabled
+                            class="flex-[1.4] inline-flex items-center justify-center gap-2 text-sm font-semibold text-white bg-teal-500 hover:bg-teal-600 active:bg-teal-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg px-4 py-3 transition-colors shadow-sm shadow-teal-500/20">
+                        <i id="btnApproveSendIcon" class="fa-solid fa-paper-plane"></i>
+                        <span id="btnApproveSendLabel">Approve &amp; Send Automated Email via Spring Mail</span>
+                    </button>
+                </div>
+                <p id="poFormStatus" class="text-xs text-slate-400 dark:text-slate-500 text-center"></p>
+            </div>
+        </div>
+
+        <!-- ================= PO AUDIT LOG ================= -->
+        <div class="xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+            <div class="px-5 pt-5 pb-3 flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-semibold text-slate-900 dark:text-slate-50 tracking-tight">PO Audit Log</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Full history of purchase orders raised.</p>
+                </div>
+                <span class="text-xs text-slate-400 dark:text-slate-500 font-mono"><span id="auditCount">0</span> records</span>
+            </div>
+
+            <div class="border-y border-slate-100 dark:border-slate-800">
+                <div class="overflow-x-auto max-h-[560px] overflow-y-auto">
+                    <table class="w-full text-sm min-w-[520px]">
+                        <thead class="sticky top-0 bg-slate-50/95 dark:bg-slate-800/90 backdrop-blur">
+                        <tr class="text-left text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wide border-b border-slate-100 dark:border-slate-800">
+                            <th class="px-3.5 py-2.5 font-medium">PO Number</th>
+                            <th class="px-2 py-2.5 font-medium">Supplier</th>
+                            <th class="px-2 py-2.5 font-medium">Status</th>
+                            <th class="px-2 py-2.5 font-medium">Created</th>
+                            <th class="px-2 py-2.5 font-medium">Sent</th>
+                        </tr>
+                        </thead>
+                        <tbody id="auditBody"></tbody>
+                    </table>
+                </div>
+                <div id="auditEmpty" class="hidden px-5 py-10 text-center text-sm text-slate-400 dark:text-slate-500">
+                    <i class="fa-solid fa-inbox text-2xl mb-2 block"></i> No purchase orders yet.
+                </div>
+            </div>
+
+            <div class="px-5 py-3.5 flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-500">
+                <i class="fa-solid fa-circle text-slate-300 dark:text-slate-600 text-[7px]"></i><span>DRAFT</span>
+                <i class="fa-solid fa-circle text-teal-500 text-[7px] ml-2"></i><span>APPROVED_AND_SENT</span>
+                <i class="fa-solid fa-circle text-emerald-500 text-[7px] ml-2"></i><span>RECEIVED</span>
+                <i class="fa-solid fa-circle text-rose-500 text-[7px] ml-2"></i><span>CANCELLED</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-[60] animate-floatUp">
+    <div class="flex items-center gap-3 bg-slate-900 dark:bg-slate-800 text-white text-sm rounded-xl shadow-lg px-4 py-3 border border-slate-700 max-w-sm">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-teal-400"></i>
+        <span id="toastMsg">Saved.</span>
+    </div>
+</div>
+
+<script>
+    /* ============ THEME TOGGLE ============ */
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('spe_theme') === 'dark' || (!localStorage.getItem('spe_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.classList.add('dark');
+    }
+    themeToggle.addEventListener('click', () => {
+        root.classList.toggle('dark');
+        localStorage.setItem('spe_theme', root.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    /* ============ TOAST HELPER ============ */
+    let toastTimer;
+    function showToast(msg, icon = 'fa-circle-check', color = 'text-teal-400') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        const iconEl = document.getElementById('toastIcon');
+        iconEl.className = `fa-solid ${icon} ${color}`;
+        toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.add('hidden'), 3200);
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
+
+    function fmtMoney(n) {
+        return 'Rs. ' + Number(n).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtDate(d) {
+        if (!d) return '—';
+        const dt = (d instanceof Date) ? d : new Date(d);
+        return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    /* ============ SEED DATA: SUPPLIERS ============ */
+    const suppliers = [
+        { id: 'SUP-01', name: 'Ceylon Pharma Distributors', email: 'orders@ceylonpharma.lk' },
+        { id: 'SUP-02', name: 'Lanka Medisupplies (Pvt) Ltd', email: 'procurement@lankamedi.lk' },
+        { id: 'SUP-03', name: 'HealthLine Wholesale', email: 'sales@healthlinewholesale.com' },
+        { id: 'SUP-04', name: 'Rajarata Drug House', email: 'purchase@rajaratadrugs.lk' },
+    ];
+
+    /* ============ SEED DATA: INVENTORY ============ */
+    const inventory = [
+        { drugId: 'RX-01', name: 'Paracetamol 500mg Tab', icon: 'fa-tablets', qty: 18,  reorder: 40, unitCost: 3.00,  supplierId: 'SUP-01' },
+        { drugId: 'RX-02', name: 'Amoxicillin 250mg Cap', icon: 'fa-capsules', qty: 12,  reorder: 30, unitCost: 8.00,  supplierId: 'SUP-02' },
+        { drugId: 'RX-03', name: 'Cetirizine 10mg Tab',  icon: 'fa-tablets', qty: 24,  reorder: 25, unitCost: 5.00,  supplierId: 'SUP-01' },
+        { drugId: 'RX-06', name: 'Amlodipine 5mg Tab',   icon: 'fa-tablets', qty: 15,  reorder: 30, unitCost: 5.50,  supplierId: 'SUP-03' },
+        { drugId: 'RX-07', name: 'Salbutamol Inhaler',   icon: 'fa-lungs',   qty: 4,   reorder: 8,  unitCost: 320.00, supplierId: 'SUP-04' },
+        { drugId: 'RX-10', name: 'Vitamin B Complex Tab',icon: 'fa-capsules', qty: 20,  reorder: 50, unitCost: 2.20,  supplierId: 'SUP-02' },
+        { drugId: 'RX-04', name: 'Omeprazole 20mg Cap',  icon: 'fa-capsules', qty: 55,  reorder: 30, unitCost: 9.50,  supplierId: 'SUP-03' },
+        { drugId: 'RX-05', name: 'Metformin 500mg Tab',  icon: 'fa-tablets', qty: 200, reorder: 40, unitCost: 4.00,  supplierId: 'SUP-01' },
+    ];
+
+    function isLowStock(item) { return item.qty <= item.reorder; }
+
+    /* ============ SEED DATA: PO AUDIT LOG ============ */
+    let poSeq = 6;
+    let auditLog = [
+        { po: 'PO-000005', supplierId: 'SUP-01', status: 'RECEIVED',          created: '2026-08-10', sent: '2026-08-10' },
+        { po: 'PO-000004', supplierId: 'SUP-03', status: 'APPROVED_AND_SENT', created: '2026-08-14', sent: '2026-08-14' },
+        { po: 'PO-000003', supplierId: 'SUP-02', status: 'CANCELLED',         created: '2026-08-05', sent: null },
+        { po: 'PO-000002', supplierId: 'SUP-04', status: 'APPROVED_AND_SENT', created: '2026-08-16', sent: '2026-08-16' },
+        { po: 'PO-000001', supplierId: 'SUP-01', status: 'DRAFT',             created: '2026-08-18', sent: null },
+    ];
+
+    const statusStyles = {
+        DRAFT:               'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400',
+        APPROVED_AND_SENT:   'bg-teal-500/10 border-teal-500/30 text-teal-600 dark:text-teal-300',
+        RECEIVED:            'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-300',
+        CANCELLED:           'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-300',
+    };
+    const statusLabels = {
+        DRAFT: 'DRAFT',
+        APPROVED_AND_SENT: 'APPROVED & SENT',
+        RECEIVED: 'RECEIVED',
+        CANCELLED: 'CANCELLED',
+    };
+
+    function supplierName(id) {
+        const s = suppliers.find(s => s.id === id);
+        return s ? s.name : 'Unknown Supplier';
+    }
+
+    /* ============ PO FORM STATE ============ */
+    // selections: Map drugId -> qtyRequested
+    const selections = new Map();
+    let selectedSupplierId = '';
+
+    function currentPoNumber() {
+        return 'PO-' + String(poSeq).padStart(6, '0');
+    }
+
+    /* ============ RENDER: LOW STOCK GRID ============ */
+    function renderLowStock() {
+        const grid = document.getElementById('lowStockGrid');
+        const empty = document.getElementById('lowStockEmpty');
+        const lowItems = inventory.filter(isLowStock);
+        document.getElementById('statLowStock').textContent = lowItems.length;
+
+        if (lowItems.length === 0) {
+            grid.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+
+        grid.innerHTML = lowItems.map(item => {
+            const deficit = Math.max(0, item.reorder - item.qty);
+            const severe = item.qty === 0;
+            return `
+        <div class="card-pop border ${severe ? 'border-rose-500/40 bg-rose-500/5' : 'border-amber-500/30 bg-amber-500/5'} dark:bg-slate-800/40 rounded-xl px-4 py-3.5">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-lg ${severe ? 'bg-rose-500/15 text-rose-500' : 'bg-amber-500/15 text-amber-500'} flex items-center justify-center shrink-0">
+                <i class="fa-solid ${item.icon}"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">${escapeHtml(item.name)}</p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">${item.drugId} · ${escapeHtml(supplierName(item.supplierId))}</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-semibold rounded-full px-2 py-1 shrink-0 ${severe ? 'bg-rose-500 text-white' : 'bg-amber-500 text-white'}">
+              ${severe ? 'OUT OF STOCK' : 'LOW'}
+            </span>
+          </div>
+          <div class="flex items-center justify-between mt-3 text-xs">
+            <div class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+              <span>On Hand: <b class="text-slate-700 dark:text-slate-200 font-mono">${item.qty}</b></span>
+              <span>Reorder Lvl: <b class="text-slate-700 dark:text-slate-200 font-mono">${item.reorder}</b></span>
+            </div>
+            <span class="text-amber-600 dark:text-amber-300 font-mono">−${deficit}</span>
+          </div>
+          <button type="button" data-add-drug="${item.drugId}" class="add-to-po-btn w-full mt-3 text-xs font-semibold text-teal-600 dark:text-teal-300 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 rounded-lg py-2 transition-colors">
+            <i class="fa-solid fa-plus mr-1"></i>Add to PO
+          </button>
+        </div>`;
+        }).join('');
+
+        grid.querySelectorAll('.add-to-po-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = inventory.find(i => i.drugId === btn.dataset.addDrug);
+                if (!item) return;
+                if (!selections.has(item.drugId)) {
+                    selections.set(item.drugId, Math.max(1, item.reorder - item.qty));
+                }
+                if (!selectedSupplierId) {
+                    selectedSupplierId = item.supplierId;
+                    document.getElementById('supplierSelect').value = item.supplierId;
+                    onSupplierChange();
+                }
+                renderPoItems();
+                showToast(`${item.name} added to the purchase order.`);
+            });
+        });
+    }
+
+    /* ============ RENDER: SUPPLIER DROPDOWN ============ */
+    function renderSuppliers() {
+        const select = document.getElementById('supplierSelect');
+        select.innerHTML = '<option value="">Select a supplier…</option>' +
+            suppliers.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+    }
+
+    function onSupplierChange() {
+        const id = document.getElementById('supplierSelect').value;
+        selectedSupplierId = id;
+        const hint = document.getElementById('supplierEmailHint');
+        const s = suppliers.find(s => s.id === id);
+        if (s) {
+            document.getElementById('supplierEmailText').textContent = s.email;
+            hint.classList.remove('hidden');
+            hint.classList.add('flex');
+        } else {
+            hint.classList.add('hidden');
+            hint.classList.remove('flex');
+        }
+        updateApproveButtonState();
+    }
+    document.getElementById('supplierSelect').addEventListener('change', onSupplierChange);
+
+    /* ============ RENDER: PO ITEM TABLE ============ */
+    function renderPoItems() {
+        const tbody = document.getElementById('poItemsBody');
+        if (selections.size === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="px-5 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
+        <i class="fa-solid fa-boxes-packing text-xl mb-2 block"></i> No items selected — add items from the low-stock alerts above.
+      </td></tr>`;
+        } else {
+            tbody.innerHTML = [...selections.entries()].map(([drugId, qty]) => {
+                const item = inventory.find(i => i.drugId === drugId);
+                if (!item) return '';
+                const lineTotal = qty * item.unitCost;
+                return `
+          <tr class="row-fade border-b border-slate-50 dark:border-slate-800/70 last:border-0">
+            <td class="px-3.5 py-2.5">
+              <button type="button" data-remove-drug="${item.drugId}" class="remove-po-item text-slate-300 hover:text-rose-500 dark:text-slate-600 dark:hover:text-rose-400 transition-colors">
+                <i class="fa-solid fa-circle-xmark"></i>
+              </button>
+            </td>
+            <td class="px-2 py-2.5">
+              <p class="text-sm font-medium text-slate-800 dark:text-slate-100">${escapeHtml(item.name)}</p>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">${item.drugId}</p>
+            </td>
+            <td class="px-2 py-2.5 text-center font-mono text-slate-500 dark:text-slate-400">${item.qty}</td>
+            <td class="px-2 py-2.5 text-center font-mono text-slate-500 dark:text-slate-400">${item.reorder}</td>
+            <td class="px-2 py-2.5 text-center">
+              <input type="number" min="1" value="${qty}" data-qty-drug="${item.drugId}"
+                class="po-qty-input w-20 text-center bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/40 rounded-lg py-1.5 text-sm font-mono outline-none transition-colors" />
+            </td>
+            <td class="px-2 py-2.5 text-right font-mono text-slate-500 dark:text-slate-400">${fmtMoney(item.unitCost)}</td>
+            <td class="px-3.5 py-2.5 text-right font-mono font-medium text-slate-800 dark:text-slate-100">${fmtMoney(lineTotal)}</td>
+          </tr>`;
+            }).join('');
+        }
+
+        tbody.querySelectorAll('.remove-po-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selections.delete(btn.dataset.removeDrug);
+                renderPoItems();
+            });
+        });
+        tbody.querySelectorAll('.po-qty-input').forEach(inp => {
+            inp.addEventListener('input', () => {
+                const q = Math.max(1, parseInt(inp.value, 10) || 1);
+                selections.set(inp.dataset.qtyDrug, q);
+                updateCalculator();
+            });
+        });
+
+        updateCalculator();
+    }
+
+    function updateCalculator() {
+        let itemCount = selections.size;
+        let unitCount = 0;
+        let total = 0;
+        selections.forEach((qty, drugId) => {
+            const item = inventory.find(i => i.drugId === drugId);
+            if (!item) return;
+            unitCount += qty;
+            total += qty * item.unitCost;
+        });
+        document.getElementById('calcItemCount').textContent = itemCount;
+        document.getElementById('calcUnitCount').textContent = unitCount;
+        document.getElementById('calcTotal').textContent = fmtMoney(total);
+        updateApproveButtonState();
+    }
+
+    function updateApproveButtonState() {
+        const ok = selections.size > 0 && !!selectedSupplierId;
+        document.getElementById('btnApproveSend').disabled = !ok;
+        document.getElementById('btnSaveDraft').disabled = selections.size === 0;
+    }
+
+    /* ============ SELECT ALL LOW STOCK ============ */
+    document.getElementById('selectAllLowStock').addEventListener('click', () => {
+        const lowItems = inventory.filter(isLowStock);
+        if (lowItems.length === 0) { showToast('No low-stock items to add.', 'fa-circle-info', 'text-slate-300'); return; }
+        lowItems.forEach(item => {
+            if (!selections.has(item.drugId)) selections.set(item.drugId, Math.max(1, item.reorder - item.qty));
+        });
+        if (!selectedSupplierId) {
+            selectedSupplierId = lowItems[0].supplierId;
+            document.getElementById('supplierSelect').value = selectedSupplierId;
+            onSupplierChange();
+        }
+        renderPoItems();
+        showToast(`${lowItems.length} low-stock item(s) added to the purchase order.`);
+    });
+
+    /* ============ RENDER: AUDIT LOG TABLE ============ */
+    function renderAudit() {
+        const tbody = document.getElementById('auditBody');
+        const empty = document.getElementById('auditEmpty');
+        document.getElementById('auditCount').textContent = auditLog.length;
+        document.getElementById('statDraft').textContent = auditLog.filter(r => r.status === 'DRAFT').length;
+        document.getElementById('statSent').textContent = auditLog.filter(r => r.status === 'APPROVED_AND_SENT').length;
+
+        if (auditLog.length === 0) {
+            tbody.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+
+        tbody.innerHTML = auditLog.map(r => `
+      <tr class="row-fade border-b border-slate-50 dark:border-slate-800/70 last:border-0">
+        <td class="px-3.5 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">${r.po}</td>
+        <td class="px-2 py-3 text-sm text-slate-700 dark:text-slate-200">${escapeHtml(supplierName(r.supplierId))}</td>
+        <td class="px-2 py-3">
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2.5 py-1 border ${statusStyles[r.status]}">
+            ${statusLabels[r.status]}
+          </span>
+        </td>
+        <td class="px-2 py-3 text-xs text-slate-400 dark:text-slate-500 font-mono">${fmtDate(r.created)}</td>
+        <td class="px-2 py-3 text-xs text-slate-400 dark:text-slate-500 font-mono">${fmtDate(r.sent)}</td>
+      </tr>`).join('');
+    }
+
+    /* ============ SAVE AS DRAFT ============ */
+    document.getElementById('btnSaveDraft').addEventListener('click', () => {
+        if (selections.size === 0) return;
+        const po = currentPoNumber();
+        auditLog.unshift({
+            po,
+            supplierId: selectedSupplierId || suppliers[0].id,
+            status: 'DRAFT',
+            created: new Date().toISOString().slice(0, 10),
+            sent: null,
+        });
+        poSeq++;
+        document.getElementById('poNumberBadge').textContent = currentPoNumber();
+        renderAudit();
+        showToast(`${po} saved as draft.`, 'fa-floppy-disk', 'text-slate-300');
+    });
+
+    /* ============ ACTION TRIGGER: APPROVE & SEND VIA SPRING MAIL ============ */
+    document.getElementById('btnApproveSend').addEventListener('click', async () => {
+        if (selections.size === 0 || !selectedSupplierId) return;
+
+        const btn = document.getElementById('btnApproveSend');
+        const icon = document.getElementById('btnApproveSendIcon');
+        const label = document.getElementById('btnApproveSendLabel');
+        const statusEl = document.getElementById('poFormStatus');
+        const poNumber = currentPoNumber();
+        const supplier = suppliers.find(s => s.id === selectedSupplierId);
+
+        const items = [...selections.entries()].map(([drugId, qty]) => {
+            const item = inventory.find(i => i.drugId === drugId);
+            return { drugId, name: item ? item.name : drugId, qtyRequested: qty, unitCost: item ? item.unitCost : 0 };
+        });
+        const estimatedCost = items.reduce((sum, it) => sum + it.qtyRequested * it.unitCost, 0);
+
+        btn.disabled = true;
+        document.getElementById('btnSaveDraft').disabled = true;
+        icon.className = 'fa-solid fa-circle-notch animate-spinSlow';
+        label.textContent = 'Sending via Spring Mail…';
+        statusEl.textContent = '';
+
+        const payload = {
+            poNumber,
+            supplierId: supplier.id,
+            supplierName: supplier.name,
+            supplierEmail: supplier.email,
+            items,
+            estimatedCost,
+            status: 'APPROVED_AND_SENT',
+        };
+
+        try {
+            const res = await fetch('/api/v1/purchase-orders/approve-and-send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
+            const nowStr = new Date().toISOString().slice(0, 10);
+            auditLog.unshift({ po: poNumber, supplierId: supplier.id, status: 'APPROVED_AND_SENT', created: nowStr, sent: nowStr });
+            poSeq++;
+            selections.clear();
+            selectedSupplierId = '';
+            document.getElementById('supplierSelect').value = '';
+            onSupplierChange();
+            document.getElementById('poNumberBadge').textContent = currentPoNumber();
+            renderPoItems();
+            renderAudit();
+            statusEl.textContent = `${poNumber} approved and emailed to ${supplier.email} via Spring Mail.`;
+            showToast(`${poNumber} sent to ${supplier.name} via Spring Mail.`, 'fa-paper-plane', 'text-teal-400');
+        } catch (err) {
+            // Endpoint not available in this static demo — simulate the dispatch locally so the flow can still be reviewed.
+            const nowStr = new Date().toISOString().slice(0, 10);
+            auditLog.unshift({ po: poNumber, supplierId: supplier.id, status: 'APPROVED_AND_SENT', created: nowStr, sent: nowStr });
+            poSeq++;
+            selections.clear();
+            selectedSupplierId = '';
+            document.getElementById('supplierSelect').value = '';
+            onSupplierChange();
+            document.getElementById('poNumberBadge').textContent = currentPoNumber();
+            renderPoItems();
+            renderAudit();
+            statusEl.textContent = `${poNumber} recorded locally — Spring Mail endpoint unreachable, connect the backend to send live emails.`;
+            showToast('Spring Mail endpoint unreachable — recorded locally.', 'fa-triangle-exclamation', 'text-amber-400');
+        } finally {
+            icon.className = 'fa-solid fa-paper-plane';
+            label.innerHTML = 'Approve &amp; Send Automated Email via Spring Mail';
+            updateApproveButtonState();
+        }
+    });
+
+    /* ============ INIT ============ */
+    renderSuppliers();
+    renderLowStock();
+    renderPoItems();
+    renderAudit();
+    document.getElementById('poNumberBadge').textContent = currentPoNumber();
+</script>
+</body>
+</html>
