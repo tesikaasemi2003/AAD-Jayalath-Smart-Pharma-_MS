@@ -440,33 +440,62 @@
     </div>
 </div>
 
-<!-- ============ SCRIPT ============ -->
 <script>
-    // Initial Sample Data
-    let categories = [
-        { categoryId: 'CAT-101', categoryName: 'Analgesics', categoryDescription: 'Pain relievers and fever reducers' },
-        { categoryId: 'CAT-102', categoryName: 'Antibiotics', categoryDescription: 'Inhibits bacterial growth' },
-        { categoryId: 'CAT-103', categoryName: 'Antihistamines', categoryDescription: 'Allergy relief medications' }
-    ];
-
-    let drugs = [
-        { id: 'DRUG-001', brandName: 'Panadol Extra', genericName: 'Paracetamol + Caffeine', categoryId: 'CAT-101', reorderLevel: 100, unitType: 'Tablet' },
-        { id: 'DRUG-002', brandName: 'Amoxil', genericName: 'Amoxicillin', categoryId: 'CAT-102', reorderLevel: 50, unitType: 'Capsule' }
-    ];
-
-    let suppliers = [
-        { id: 'SUP-001', name: 'Ceylon Pharma Distributors', phone: '+94 11 234 5678', email: 'orders@ceylonpharma.lk', address: '120 Negombo Road, Wattala', springMail: true },
-        { id: 'SUP-002', name: 'Lanka Health Agency', phone: '+94 11 876 5432', email: 'supply@lankahealth.com', address: '45 Galle Road, Colombo 03', springMail: false }
-    ];
+    // Data (loaded from backend — no more hardcoded mock data)
+    let categories = [];
+    let drugs = [];
+    let suppliers = [];
 
     let activeTab = 'drugs';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    const API_CATEGORIES = '/api/v1/categories';
+    const API_DRUGS = '/api/v1/drugs';
+    const API_SUPPLIERS = '/api/v1/suppliers';
+
+    document.addEventListener('DOMContentLoaded', async () => {
         initTheme();
         initTabs();
-        renderAll();
         bindEvents();
+        await loadAllData();
     });
+
+    async function loadAllData() {
+        await Promise.all([loadCategories(), loadDrugs(), loadSuppliers()]);
+        renderAll();
+    }
+
+    async function loadCategories() {
+        try {
+            const res = await fetch(API_CATEGORIES);
+            const result = await res.json();
+            categories = result.body || [];
+        } catch (err) {
+            console.error('Failed to load categories', err);
+            categories = [];
+        }
+    }
+
+    async function loadDrugs() {
+        try {
+            const res = await fetch(API_DRUGS);
+            const result = await res.json();
+            drugs = result.body || [];
+        } catch (err) {
+            console.error('Failed to load drugs', err);
+            drugs = [];
+        }
+    }
+
+    async function loadSuppliers() {
+        try {
+            const res = await fetch(API_SUPPLIERS);
+            const result = await res.json();
+            suppliers = result.body || [];
+        } catch (err) {
+            console.error('Failed to load suppliers', err);
+            suppliers = [];
+        }
+    }
 
     function escapeHtml(str) {
         if (!str) return '';
@@ -531,16 +560,16 @@
 
         const q = categorySearch ? categorySearch.value.trim().toLowerCase() : '';
         const filtered = categories.filter(c => {
-            const name = c.categoryName || c.name || '';
+            const name = c.categoryName || '';
             return !q || name.toLowerCase().includes(q);
         });
 
         if (categoryEmptyState) categoryEmptyState.classList.toggle('hidden', filtered.length !== 0);
 
         categoryTbody.innerHTML = filtered.map(c => {
-            const id = c.categoryId ?? c.id ?? '';
-            const name = c.categoryName ?? c.name ?? '';
-            const desc = c.categoryDescription ?? c.description ?? '';
+            const id = c.categoryId ?? '';
+            const name = c.categoryName ?? '';
+            const desc = c.categoryDescription ?? '';
 
             return `
             <tr class="row-fade hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors" data-id="${id}">
@@ -573,8 +602,9 @@
         if (drugEmptyState) drugEmptyState.classList.toggle('hidden', filtered.length !== 0);
 
         drugTbody.innerHTML = filtered.map(d => {
-            const cat = categories.find(c => (c.categoryId || c.id) === d.categoryId);
-            const categoryName = cat ? (cat.categoryName || cat.name) : 'Uncategorized';
+            const catId = d.category ? d.category.categoryId : d.categoryId;
+            const cat = categories.find(c => c.categoryId === catId);
+            const categoryName = cat ? cat.categoryName : (d.category ? d.category.categoryName : 'Uncategorized');
 
             return `
             <tr class="row-fade hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
@@ -582,9 +612,9 @@
                 <td class="px-3 py-3.5 text-slate-600 dark:text-slate-300">${escapeHtml(d.genericName)}</td>
                 <td class="px-3 py-3.5"><span class="inline-flex px-2.5 py-1 text-xs rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">${escapeHtml(categoryName)}</span></td>
                 <td class="px-3 py-3.5 font-mono text-slate-600 dark:text-slate-400">${d.reorderLevel}</td>
-                <td class="px-3 py-3.5 text-slate-500 dark:text-slate-400">${escapeHtml(d.unitType)}</td>
+                <td class="px-3 py-3.5 text-slate-500 dark:text-slate-400">${escapeHtml(d.unit)}</td>
                 <td class="px-3 py-3.5 text-right pr-5 lg:pr-6">
-                    <button onclick="deleteDrug('${d.id}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" title="Delete drug">
+                    <button onclick="deleteDrug('${d.drugId}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" title="Delete drug">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </td>
@@ -601,7 +631,7 @@
         if (!supplierGrid) return;
 
         const q = supplierSearch ? supplierSearch.value.trim().toLowerCase() : '';
-        const filtered = suppliers.filter(s => !q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q));
+        const filtered = suppliers.filter(s => !q || s.supplierName.toLowerCase().includes(q) || (s.supplierContactEmail || '').toLowerCase().includes(q));
 
         if (supplierEmptyState) supplierEmptyState.classList.toggle('hidden', filtered.length !== 0);
 
@@ -609,18 +639,17 @@
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 relative group">
                 <div class="flex items-start justify-between">
                     <div>
-                        <h3 class="font-semibold text-slate-900 dark:text-slate-100">${escapeHtml(s.name)}</h3>
-                        <p class="text-xs text-slate-400 font-mono">${s.id}</p>
+                        <h3 class="font-semibold text-slate-900 dark:text-slate-100">${escapeHtml(s.supplierName)}</h3>
+                        <p class="text-xs text-slate-400 font-mono">SUP-${s.supplierId}</p>
                     </div>
-                    ${s.springMail ? '<span class="text-[10px] bg-teal-500/10 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full font-mono font-medium"><i class="fa-solid fa-paper-plane mr-1"></i> SpringMail</span>' : ''}
                 </div>
                 <div class="text-xs space-y-1 text-slate-500 dark:text-slate-400">
-                    <p><i class="fa-solid fa-phone text-slate-400 w-4"></i> ${escapeHtml(s.phone)}</p>
-                    <p><i class="fa-solid fa-envelope text-slate-400 w-4"></i> ${escapeHtml(s.email)}</p>
-                    <p><i class="fa-solid fa-location-dot text-slate-400 w-4"></i> ${escapeHtml(s.address)}</p>
+                    <p><i class="fa-solid fa-phone text-slate-400 w-4"></i> ${escapeHtml(s.supplierPhoneNumber)}</p>
+                    <p><i class="fa-solid fa-envelope text-slate-400 w-4"></i> ${escapeHtml(s.supplierContactEmail)}</p>
+                    <p><i class="fa-solid fa-location-dot text-slate-400 w-4"></i> ${escapeHtml(s.supplierAddress)}</p>
                 </div>
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex justify-end">
-                    <button onclick="deleteSupplier('${s.id}')" class="text-xs text-rose-500 hover:text-rose-600 transition-colors">
+                    <button onclick="deleteSupplier(${s.supplierId})" class="text-xs text-rose-500 hover:text-rose-600 transition-colors">
                         <i class="fa-solid fa-trash mr-1"></i> Remove
                     </button>
                 </div>
@@ -631,7 +660,7 @@
     function populateCategoryDropdown() {
         const select = document.getElementById('drugCategory');
         if (!select) return;
-        select.innerHTML = categories.map(c => `<option value="${c.categoryId || c.id}">${escapeHtml(c.categoryName || c.name)}</option>`).join('');
+        select.innerHTML = categories.map(c => `<option value="${c.categoryId}">${escapeHtml(c.categoryName)}</option>`).join('');
     }
 
     // CRUD Handlers
@@ -662,91 +691,146 @@
         if (modal) modal.classList.toggle('hidden', !show);
     }
 
-    function handleCategorySubmit(e) {
+    async function handleCategorySubmit(e) {
         e.preventDefault();
         const id = document.getElementById('categoryId').value;
         const name = document.getElementById('categoryName').value.trim();
         const desc = document.getElementById('categoryDescription').value.trim();
 
-        if (id) {
-            const idx = categories.findIndex(c => (c.categoryId || c.id) === id);
-            if (idx !== -1) categories[idx] = { categoryId: id, categoryName: name, categoryDescription: desc };
-        } else {
-            categories.push({
-                categoryId: `CAT-${100 + categories.length + 1}`,
-                categoryName: name,
-                categoryDescription: desc
-            });
+        const payload = {
+            categoryName: name,
+            categoryDescription: desc
+        };
+
+        try {
+            if (id) {
+                await fetch(`${API_CATEGORIES}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } else {
+                await fetch(API_CATEGORIES, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            }
+            await loadCategories();
+            renderCategories();
+            populateCategoryDropdown();
+        } catch (err) {
+            console.error('Failed to save category', err);
+            alert('Failed to save category. Please try again.');
         }
 
         e.target.reset();
         document.getElementById('categoryId').value = '';
         toggleModal('categoryModal', false);
-        renderCategories();
-        populateCategoryDropdown();
     }
 
-    function handleDrugSubmit(e) {
+    async function handleDrugSubmit(e) {
         e.preventDefault();
-        drugs.push({
-            id: `DRUG-00${drugs.length + 1}`,
+
+        const payload = {
             brandName: document.getElementById('drugBrand').value.trim(),
             genericName: document.getElementById('drugGeneric').value.trim(),
-            categoryId: document.getElementById('drugCategory').value,
-            unitType: document.getElementById('drugUnit').value,
+            categoryId: Number(document.getElementById('drugCategory').value),
+            unit: document.getElementById('drugUnit').value,
             reorderLevel: parseInt(document.getElementById('drugReorder').value, 10) || 0
-        });
+        };
+
+        try {
+            await fetch(API_DRUGS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            await loadDrugs();
+            renderDrugs();
+        } catch (err) {
+            console.error('Failed to save drug', err);
+            alert('Failed to save drug. Please try again.');
+        }
 
         e.target.reset();
         toggleModal('drugModal', false);
-        renderDrugs();
     }
 
-    function handleSupplierSubmit(e) {
+    async function handleSupplierSubmit(e) {
         e.preventDefault();
-        suppliers.push({
-            id: `SUP-00${suppliers.length + 1}`,
-            name: document.getElementById('supplierName').value.trim(),
-            phone: document.getElementById('supplierPhone').value.trim(),
-            email: document.getElementById('supplierEmail').value.trim(),
-            address: document.getElementById('supplierAddress').value.trim(),
-            springMail: document.getElementById('supplierSpringMail').checked
-        });
+
+        const payload = {
+            supplierName: document.getElementById('supplierName').value.trim(),
+            supplierPhoneNumber: document.getElementById('supplierPhone').value.trim(),
+            supplierContactEmail: document.getElementById('supplierEmail').value.trim(),
+            supplierAddress: document.getElementById('supplierAddress').value.trim()
+        };
+
+        try {
+            await fetch(API_SUPPLIERS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            await loadSuppliers();
+            renderSuppliers();
+        } catch (err) {
+            console.error('Failed to save supplier', err);
+            alert('Failed to save supplier. Please try again.');
+        }
 
         e.target.reset();
         toggleModal('supplierModal', false);
-        renderSuppliers();
     }
 
     window.editCategory = function(id) {
-        const cat = categories.find(c => (c.categoryId || c.id) === id);
+        const cat = categories.find(c => String(c.categoryId) === String(id));
         if (!cat) return;
 
-        document.getElementById('categoryId').value = id;
-        document.getElementById('categoryName').value = cat.categoryName || cat.name;
-        document.getElementById('categoryDescription').value = cat.categoryDescription || cat.description;
+        document.getElementById('categoryId').value = cat.categoryId;
+        document.getElementById('categoryName').value = cat.categoryName;
+        document.getElementById('categoryDescription').value = cat.categoryDescription;
         document.getElementById('categorySubmitLabel').textContent = 'Update Category';
 
         toggleModal('categoryModal', true);
     };
 
-    window.deleteCategory = function(id) {
+    window.deleteCategory = async function(id) {
         if (!confirm('Are you sure you want to delete this category?')) return;
-        categories = categories.filter(c => (c.categoryId || c.id) !== id);
-        renderCategories();
-        populateCategoryDropdown();
+        try {
+            await fetch(`${API_CATEGORIES}/${id}`, { method: 'DELETE' });
+            await loadCategories();
+            renderCategories();
+            populateCategoryDropdown();
+        } catch (err) {
+            console.error('Failed to delete category', err);
+            alert('Failed to delete category. Please try again.');
+        }
     };
 
-    window.deleteDrug = function(id) {
+    window.deleteDrug = async function(id) {
         if (!confirm('Are you sure you want to delete this drug?')) return;
-        drugs = drugs.filter(d => d.id !== id);
-        renderDrugs();
+        try {
+            await fetch(`${API_DRUGS}/${id}`, { method: 'DELETE' });
+            await loadDrugs();
+            renderDrugs();
+        } catch (err) {
+            console.error('Failed to delete drug', err);
+            alert('Failed to delete drug. Please try again.');
+        }
     };
 
-    window.deleteSupplier = function(id) {
+    window.deleteSupplier = async function(id) {
         if (!confirm('Are you sure you want to remove this supplier?')) return;
-        suppliers = suppliers.filter(s => s.id !== id);
-        renderSuppliers();
+        try {
+            await fetch(`${API_SUPPLIERS}/${id}`, { method: 'DELETE' });
+            await loadSuppliers();
+            renderSuppliers();
+        } catch (err) {
+            console.error('Failed to delete supplier', err);
+            alert('Failed to delete supplier. Please try again.');
+        }
     };
 </script>
 </body>

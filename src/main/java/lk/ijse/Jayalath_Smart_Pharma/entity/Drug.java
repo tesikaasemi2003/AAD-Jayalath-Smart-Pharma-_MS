@@ -17,7 +17,7 @@ import java.util.List;
 public class Drug {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long drugId;
+    private Long drugId;
 
     @Column(nullable=false)
     private String brandName;
@@ -25,7 +25,7 @@ public class Drug {
 
 
     @Column(nullable=false)
-    private int reorderLevel;
+    private Integer reorderLevel;
     private String unit;
 
     @ManyToOne(fetch = FetchType.LAZY)

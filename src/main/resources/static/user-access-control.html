@@ -360,7 +360,7 @@
         const q = searchInput.value.trim().toLowerCase();
         const roleQ = roleFilter.value;
 
-        // users Array එකක් නොවේ නම් හිස් Array එකක් යොදාගනී
+
         const userList = Array.isArray(users) ? users : [];
 
         const filtered = userList.filter(u => {
@@ -407,21 +407,24 @@
     searchInput.addEventListener('input', renderTable);
     roleFilter.addEventListener('change', renderTable);
 
-    /* ============ FETCH USERS FROM DATABASE (GET) ============ */
+
+
     async function fetchUsersFromDatabase() {
         try {
-            const res = await fetch(API_BASE, { headers: authHeaders() });
+            const res = await fetch(`${API_BASE}/getAllUsers`, { headers: authHeaders() });
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
-            const data = await res.json();
+            const result = await res.json();
+            const list = result.body || [];
 
-            if (Array.isArray(data)) {
-                users = data;
-            } else if (data && Array.isArray(data.content)) {
-                users = data.content;
-            } else {
-                users = [];
-            }
+            users = list.map(u => ({
+                id: u.userId,
+                fullName: u.fullName,
+                email: u.email,
+                provider: u.authProvider,
+                active: u.active,
+                roles: (u.role || []).map(r => r.roleName)
+            }));
 
             renderTable();
         } catch (err) {
@@ -430,7 +433,6 @@
             tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-rose-500">Failed to connect to Spring Boot backend.</td></tr>`;
         }
     }
-
     /* ============ ACTIVE STATUS TOGGLE (PATCH) ============ */
     tbody.addEventListener('change', async (e) => {
         if (!e.target.classList.contains('active-toggle')) return;
@@ -467,10 +469,9 @@
             if (!confirm(`Remove ${user ? user.fullName : 'this user'} from Smart-Pharma Engine? This cannot be undone.`)) return;
 
             try {
-                const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE', headers: authHeaders() });
+                const res = await fetch(`${API_BASE}/deleteUsers/${id}`, { method: 'DELETE', headers: authHeaders() });
                 if (!res.ok) throw new Error('Delete failed');
 
-                // Database එකෙන් delete වූ පසු UI එකෙන්ද ඉවත් කර table එක re-render කිරීම
                 users = users.filter(u => u.id !== id);
                 renderTable();
             } catch (err) {
@@ -588,20 +589,20 @@
 
         const editingId = userIdField.value;
         const payload = {
-            id: editingId || null,
             fullName: fullNameInput.value.trim(),
             email: emailInput.value.trim(),
-            provider: providerSelect.value,
+            authProvider: providerSelect.value,
             active: activeToggle.checked,
-            roles: selectedRoles
+            role: selectedRoles.map(r => ({ roleName: r }))
         };
 
         if (!isGoogle && passwordInput.value) {
             payload.password = passwordInput.value;
         }
 
-        const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
+        const url = editingId ? `${API_BASE}/updateUsers/${editingId}` : `${API_BASE}/saveUsers`;
         const method = editingId ? 'PUT' : 'POST';
+
 
         submitBtn.disabled = true;
         submitSpinner.classList.remove('hidden');

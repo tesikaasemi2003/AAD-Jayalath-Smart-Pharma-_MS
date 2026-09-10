@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long inventoryId;
+    private Long inventoryId;
 
     @Column(nullable = false)
     private int quantityOnHand;

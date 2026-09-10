@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorDTO {
-    private long doctorId;
+    private Long doctorId;
     private String doctorName;
     private String slmcRegistrationNo;
     private String hospital;

@@ -28,9 +28,9 @@ public class DoctorServiceImpl implements DoctorService {
         log.info("Executing saveDoctor method for Name: {}", doctorDTO.getDoctorName());
         try {
             Doctor doctor = new Doctor();
-            doctorDTO.setDoctorName(doctorDTO.getDoctorName());
-            doctorDTO.setHospital(doctorDTO.getHospital());
-            doctorDTO.setSlmcRegistrationNo(doctorDTO.getSlmcRegistrationNo());
+            doctor.setDoctorName(doctorDTO.getDoctorName());
+            doctor.setHospital(doctorDTO.getHospital());
+            doctor.setSlmcRegistrationNo(doctorDTO.getSlmcRegistrationNo());
             doctorRepository.save(doctor);
 
         } catch (Exception e) {
@@ -81,9 +81,9 @@ public class DoctorServiceImpl implements DoctorService {
             }
 
             Doctor doctor = optionalDoctor.get();
-            doctorDTO.setDoctorName(doctorDTO.getDoctorName());
-            doctorDTO.setHospital(doctorDTO.getHospital());
-            doctorDTO.setSlmcRegistrationNo(doctorDTO.getSlmcRegistrationNo());
+            doctor.setDoctorName(doctorDTO.getDoctorName());
+            doctor.setHospital(doctorDTO.getHospital());
+            doctor.setSlmcRegistrationNo(doctorDTO.getSlmcRegistrationNo());
             doctorRepository.save(doctor);
 
         } catch (Exception e) {

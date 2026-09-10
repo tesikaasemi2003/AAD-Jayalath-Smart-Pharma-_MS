@@ -6,6 +6,7 @@ import lk.ijse.Jayalath_Smart_Pharma.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseCode.OPERATION_SUCCESS;
 import static lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage.SUCCESS_MESSAGE;
@@ -37,8 +38,14 @@ public class UserController {
     }
 
     @PutMapping("updateUsers/{userId}")
-    public CommonResponse updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
-        userService.updateUser(id, userDTO);
+    public CommonResponse updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
+        userService.updateUser(userId, userDTO);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+
+    @PatchMapping("{userId}/status")
+    public CommonResponse updateUserStatus(@PathVariable long userId, @RequestBody Map<String, Boolean> body) {
+        userService.updateUserStatus(userId, Boolean.TRUE.equals(body.get("active")));
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 

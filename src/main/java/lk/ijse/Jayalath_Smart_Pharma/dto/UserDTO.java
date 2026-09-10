@@ -16,10 +16,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private long userId;
+    private Long userId;
     private String fullName;
     private String email;
     private String password;
     private authProvider authProvider;
+    private boolean active = true;
     private Set<Role> role = new HashSet<>();
 }

@@ -50,9 +50,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             }
 
             Prescription prescription = new Prescription();
-            prescriptionDTO.setPatientId(prescriptionDTO.getPatientId());
-            prescriptionDTO.setDoctorId(prescriptionDTO.getDoctorId());
-            prescriptionDTO.setIssuedDate(prescriptionDTO.getIssuedDate() != null ?
+            prescription.setPatient(optionalPatient.get());
+            prescription.setDoctor(optionalDoctor.get());
+            prescription.setIssueDate(prescriptionDTO.getIssuedDate() != null ?
                     prescriptionDTO.getIssuedDate() : LocalDate.now());
             prescription.setRemarks(prescriptionDTO.getRemarks());
 

@@ -19,7 +19,7 @@ import java.util.List;
 public class SalesOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long orderId;
+    private Long orderId;
 
     @Column(unique = true , nullable = false )
     private String orderNumber;

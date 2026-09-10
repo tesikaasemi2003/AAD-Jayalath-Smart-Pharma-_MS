@@ -44,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
                 categoryDTO.setCategoryId(category.getCategoryId());
                 categoryDTO.setCategoryName(category.getCategoryName());
                 categoryDTO.setCategoryDescription(category.getCategoryDescription());
+                categoryDTOS.add(categoryDTO);
             }
             return categoryDTOS;
         }catch(Exception e){

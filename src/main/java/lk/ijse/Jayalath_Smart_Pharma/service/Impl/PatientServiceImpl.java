@@ -28,10 +28,10 @@ public class PatientServiceImpl implements PatientService {
         log.info("Executing savePatient method for Name: {}", patientDTO.getPatientName());
         try {
             Patient patient = new Patient();
-            patientDTO.setPatientName(patientDTO.getPatientName());
-            patientDTO.setPatientPhone(patientDTO.getPatientPhone());
-            patientDTO.setPatientEmail(patientDTO.getPatientEmail());
-            patientDTO.setNicOrPassport(patientDTO.getNicOrPassport());
+            patient.setPatientName(patientDTO.getPatientName());
+            patient.setPatientPhone(patientDTO.getPatientPhone());
+            patient.setPatientEmail(patientDTO.getPatientEmail());
+            patient.setNicOrPassport(patientDTO.getNicOrPassport());
             patientRepository.save(patient);
         } catch (Exception e) {
             log.error("Error in savePatient method: " + e.getMessage());
@@ -81,10 +81,10 @@ public class PatientServiceImpl implements PatientService {
             }
 
             Patient patient = optionalPatient.get();
-            patientDTO.setPatientName(patientDTO.getPatientName());
-            patientDTO.setPatientPhone(patientDTO.getPatientPhone());
-            patientDTO.setPatientEmail(patientDTO.getPatientEmail());
-            patientDTO.setNicOrPassport(patientDTO.getNicOrPassport());
+            patient.setPatientName(patientDTO.getPatientName());
+            patient.setPatientPhone(patientDTO.getPatientPhone());
+            patient.setPatientEmail(patientDTO.getPatientEmail());
+            patient.setNicOrPassport(patientDTO.getNicOrPassport());
             patientRepository.save(patient);
         } catch (Exception e) {
             log.error("Error in updatePatient method: " + e.getMessage());

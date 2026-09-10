@@ -413,20 +413,46 @@
         toastTimer = setTimeout(() => toast.classList.add('hidden'), 2600);
     }
 
-    /* ============ SEED DATA ============ */
-    let doctors = [
-        { id: 'DOC-1001', slmc: 'SLMC 18452', name: 'Dr. A. K. Perera', hospital: 'National Hospital Colombo' },
-        { id: 'DOC-1002', slmc: 'SLMC 21930', name: 'Dr. S. Jayasuriya', hospital: 'Asiri Central Hospital' },
-        { id: 'DOC-1003', slmc: 'SLMC 19754', name: 'Dr. N. Fernando', hospital: 'Nawaloka Hospital' },
-        { id: 'DOC-1004', slmc: 'SLMC 24810', name: 'Dr. R. Wickramasinghe', hospital: 'Durdans Hospital' },
-    ];
 
-    let patients = [
-        { id: 'PAT-2001', nic: '912345678V', name: 'K. D. Fernando', phone: '0771234567', email: 'k.fernando@gmail.com' },
-        { id: 'PAT-2002', nic: '200145678912', name: 'W. M. Silva', phone: '0759876543', email: 'wm.silva@gmail.com' },
-        { id: 'PAT-2003', nic: '885678123V', name: 'T. R. Jayawardena', phone: '0713456789', email: '' },
-        { id: 'PAT-2004', nic: 'N4521789', name: 'P. Amarasekara (Passport)', phone: '0765551234', email: 'p.amara@yahoo.com' },
-    ];
+    /* ============ DATA (loaded from backend) ============ */
+    const API_DOCTORS = '/api/v1/doctors';
+    const API_PATIENTS = '/api/v1/patients';
+
+    let doctors = [];
+    let patients = [];
+
+    async function loadDoctors() {
+        try {
+            const res = await fetch(`${API_DOCTORS}/getAlldoctors`);
+            const result = await res.json();
+            doctors = (result.body || []).map(d => ({
+                id: d.doctorId,
+                slmc: d.slmcRegistrationNo,
+                name: d.doctorName,
+                hospital: d.hospital
+            }));
+        } catch (err) {
+            console.error('Failed to load doctors', err);
+            doctors = [];
+        }
+    }
+
+    async function loadPatients() {
+        try {
+            const res = await fetch(`${API_PATIENTS}/getAllPatients`);
+            const result = await res.json();
+            patients = (result.body || []).map(p => ({
+                id: p.patientId,
+                nic: p.nicOrPassport,
+                name: p.patientName,
+                phone: p.patientPhone,
+                email: p.patientEmail
+            }));
+        } catch (err) {
+            console.error('Failed to load patients', err);
+            patients = [];
+        }
+    }
 
     const drugs = [
         { id: 'RX-01', name: 'Paracetamol 500mg Tab', price: 5.00 },
@@ -493,40 +519,58 @@
     });
 
     /* ============ DOCTOR REGISTRATION ============ */
-    document.getElementById('doctorForm').addEventListener('submit', (e) => {
+    document.getElementById('doctorForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        doctorSeq += 1;
-        const doc = {
-            id: 'DOC-' + (1000 + doctorSeq),
-            slmc: document.getElementById('docSlmc').value.trim(),
-            name: document.getElementById('docName').value.trim(),
+        const payload = {
+            slmcRegistrationNo: document.getElementById('docSlmc').value.trim(),
+            doctorName: document.getElementById('docName').value.trim(),
             hospital: document.getElementById('docHospital').value.trim(),
         };
-        doctors.push(doc);
-        e.target.reset();
-        closeModal('doctorModal');
-        renderStats();
-        renderDirectory();
-        showToast(`Doctor "${doc.name}" registered.`);
+
+        try {
+            await fetch(`${API_DOCTORS}/saveDoctors`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            await loadDoctors();
+            e.target.reset();
+            closeModal('doctorModal');
+            renderStats();
+            renderDirectory();
+            showToast(`Doctor "${payload.doctorName}" registered.`);
+        } catch (err) {
+            console.error('Failed to save doctor', err);
+            showToast('Could not register doctor.', 'fa-triangle-exclamation', 'text-rose-400');
+        }
     });
 
     /* ============ PATIENT REGISTRATION ============ */
-    document.getElementById('patientForm').addEventListener('submit', (e) => {
+    document.getElementById('patientForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        patientSeq += 1;
-        const pat = {
-            id: 'PAT-' + (2000 + patientSeq),
-            nic: document.getElementById('patNic').value.trim(),
-            name: document.getElementById('patName').value.trim(),
-            phone: document.getElementById('patPhone').value.trim(),
-            email: document.getElementById('patEmail').value.trim(),
+        const payload = {
+            nicOrPassport: document.getElementById('patNic').value.trim(),
+            patientName: document.getElementById('patName').value.trim(),
+            patientPhone: document.getElementById('patPhone').value.trim(),
+            patientEmail: document.getElementById('patEmail').value.trim(),
         };
-        patients.push(pat);
-        e.target.reset();
-        closeModal('patientModal');
-        renderStats();
-        renderDirectory();
-        showToast(`Patient "${pat.name}" registered.`);
+
+        try {
+            await fetch(`${API_PATIENTS}/savePatients`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            await loadPatients();
+            e.target.reset();
+            closeModal('patientModal');
+            renderStats();
+            renderDirectory();
+            showToast(`Patient "${payload.patientName}" registered.`);
+        } catch (err) {
+            console.error('Failed to save patient', err);
+            showToast('Could not register patient.', 'fa-triangle-exclamation', 'text-rose-400');
+        }
     });
 
     /* ============ DIRECTORY (LEFT COLUMN) ============ */
@@ -820,7 +864,7 @@
             localStorage.setItem('posCart', JSON.stringify(cartItems));
             localStorage.setItem('posCartMeta', JSON.stringify(cartMeta));
             showToast(`Prescription ${rxId} forwarded to POS Counter…`);
-            setTimeout(() => { window.location.href = 'pos.html'; }, 700);
+            setTimeout(() => { window.location.href = 'POS.html'; }, 700);
         } catch (err) {
             console.error('Failed to forward to POS:', err);
             showToast('Could not forward to POS Counter.', 'fa-triangle-exclamation', 'text-rose-400');
@@ -834,10 +878,13 @@
     }
 
     /* ============ INIT ============ */
-    renderStats();
-    renderDirectory();
-    addLineRow();
-    updateFormStatus();
+    (async () => {
+        await Promise.all([loadDoctors(), loadPatients()]);
+        renderStats();
+        renderDirectory();
+        addLineRow();
+        updateFormStatus();
+    })();
 </script>
 </body>
 </html>

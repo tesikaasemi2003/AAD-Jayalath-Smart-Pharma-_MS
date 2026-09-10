@@ -15,10 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DrugDTO {
-    private long drugId;
+    private Long drugId;
     private String brandName;
     private String genericName;
-    private int reorderLevel;
+    private Integer reorderLevel;
     private String unit;
     private Category category;
     private List<DrugBatch> batches;

@@ -35,11 +35,11 @@ public class DrugServiceImpl implements DrugService {
                 throw new RuntimeException("Category Not Found");
             }
             Drug drug = new Drug();
-            drugDTO.setBrandName(drugDTO.getBrandName());
-            drugDTO.setGenericName(drugDTO.getGenericName());
-            drugDTO.setReorderLevel(drugDTO.getReorderLevel());
-            drugDTO.setUnit(drugDTO.getUnit());
-            drugDTO.setCategory(optionalCategory.get());
+            drug.setBrandName(drugDTO.getBrandName());
+            drug.setGenericName(drugDTO.getGenericName());
+            drug.setReorderLevel(drugDTO.getReorderLevel());
+            drug.setUnit(drugDTO.getUnit());
+            drug.setCategory(optionalCategory.get());
 
             drugRepository.save(drug);
 
@@ -48,6 +48,7 @@ public class DrugServiceImpl implements DrugService {
             throw e;
         }
     }
+
     @Override
     public List<DrugDTO> getAllDrugs() {
         log.info("Executing getAllDrugs method");
@@ -110,11 +111,11 @@ public class DrugServiceImpl implements DrugService {
                 throw new RuntimeException("Category Not Found");
             }
             Drug drug = optionalDrug.get();
-            drugDTO.setBrandName(drugDTO.getBrandName());
-            drugDTO.setGenericName(drugDTO.getGenericName());
-            drugDTO.setReorderLevel(drugDTO.getReorderLevel());
-            drugDTO.setUnit(drugDTO.getUnit());
-            drugDTO.setCategory(optionalCategory.get());
+            drug.setBrandName(drugDTO.getBrandName());
+            drug.setGenericName(drugDTO.getGenericName());
+            drug.setReorderLevel(drugDTO.getReorderLevel());
+            drug.setUnit(drugDTO.getUnit());
+            drug.setCategory(optionalCategory.get());
             drugRepository.save(drug);
         } catch (Exception e) {
             log.error("Error in updateDrug method: " + e.getMessage());

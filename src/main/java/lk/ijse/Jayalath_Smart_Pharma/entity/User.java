@@ -28,6 +28,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private authProvider authProvider;
 
+    private boolean active = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",

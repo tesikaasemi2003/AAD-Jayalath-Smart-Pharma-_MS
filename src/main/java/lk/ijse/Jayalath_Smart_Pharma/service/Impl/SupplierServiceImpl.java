@@ -29,14 +29,14 @@ public class SupplierServiceImpl implements SupplierService {
         log.info("Executing saveSupplier method");
         try {
             Supplier supplier = new Supplier();
-            supplierDTO.setSupplierName(supplierDTO.getSupplierName());
-            supplierDTO.setSupplierContactEmail(supplierDTO.getSupplierContactEmail());
-            supplierDTO.setSupplierAddress(supplierDTO.getSupplierAddress());
-            supplierDTO.setSupplierPhoneNumber(String.valueOf(supplierDTO.getSupplierPhoneNumber()));
+            supplier.setSupplierName(supplierDTO.getSupplierName());
+            supplier.setSupplierContactEmail(supplierDTO.getSupplierContactEmail());
+            supplier.setSupplierAddress(supplierDTO.getSupplierAddress());
+            supplier.setSupplierPhoneNumber(supplierDTO.getSupplierPhoneNumber());
             supplierRepository.save(supplier);
 
         } catch (Exception e) {
-            log.error("Error in saving User" + e.getMessage());
+            log.error("Error in saving Supplier" + e.getMessage());
             throw e;
         }
     }
@@ -97,18 +97,17 @@ public class SupplierServiceImpl implements SupplierService {
                 throw new RuntimeException("Supplier Not Found");
             }
             Supplier supplier = optionalSupplier.get();
-            supplierDTO.setSupplierName(supplier.getSupplierName());
-            supplierDTO.setSupplierContactEmail(supplier.getSupplierContactEmail());
-            supplierDTO.setSupplierAddress(supplier.getSupplierAddress());
-            supplierDTO.setSupplierPhoneNumber(supplier.getSupplierPhoneNumber());
-            supplierRepository.save(supplier);
-
+            supplier.setSupplierName(supplierDTO.getSupplierName());
+            supplier.setSupplierContactEmail(supplierDTO.getSupplierContactEmail());
+            supplier.setSupplierAddress(supplierDTO.getSupplierAddress());
+            supplier.setSupplierPhoneNumber(supplierDTO.getSupplierPhoneNumber());
             supplierRepository.save(supplier);
         } catch (Exception e) {
             log.error("Error in updateSupplier method: " + e.getMessage());
             throw e;
         }
     }
+
 
     @Override
     @Transactional

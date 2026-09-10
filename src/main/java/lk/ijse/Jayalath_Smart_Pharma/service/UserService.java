@@ -8,6 +8,7 @@ public interface UserService {
     public void saveUser(UserDTO userDTO);
     public List<UserDTO> getAllUsers();
     public UserDTO getUserById(long userId);
-    public void updateUser( Long userId,UserDTO userDTO);
+    void updateUserStatus(long userId, boolean active);
     public void deleteUser(long userId);
+    public void updateUser(Long userId, UserDTO userDTO);
 }
