@@ -11,5 +11,6 @@ public interface DrugBatchService {
     public List<DrugBatchDTO> getAvailableBatchesByFEFO(Long drugId);
     public List<DrugBatchDTO> getExpiringBatchesWithinDays(int days);
     public void updateDrugBatch(Long batchId, DrugBatchDTO drugBatchDTO);
+    void applyDiscount(Long batchId, double discountPercent);
     public void deleteDrugBatch(Long batchId);
 }

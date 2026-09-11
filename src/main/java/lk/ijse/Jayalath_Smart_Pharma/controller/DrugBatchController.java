@@ -54,6 +54,13 @@ public class DrugBatchController {
         return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
     }
 
+    @PatchMapping("{batchId}/apply-discount")
+    public CommonResponse applyDiscount(@PathVariable Long batchId, @RequestBody java.util.Map<String, Double> body) {
+        double discountPercent = body.getOrDefault("discountPercent", 0.0);
+        drugBatchService.applyDiscount(batchId, discountPercent);
+        return new CommonResponse(OPERATION_SUCCESS, SUCCESS_MESSAGE);
+    }
+
     @DeleteMapping("deleteDrugBatches/{batchId}")
     public CommonResponse deleteDrugBatch(@PathVariable Long batchId) {
         drugBatchService.deleteDrugBatch(batchId);

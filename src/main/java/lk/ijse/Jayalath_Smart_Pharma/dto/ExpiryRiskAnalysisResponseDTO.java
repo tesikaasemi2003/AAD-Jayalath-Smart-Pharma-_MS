@@ -12,11 +12,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpiryRiskAnalysisResponseDTO {
-    private long batchId;
+    private Long batchId;
     private String drugName;
     private String batchNumber;
     private LocalDate expiryDate;
-    private int quantityOnHand;
+    private Long daysToExpiry;
+    private Integer quantityOnHand;
     private String riskLevel; // HIGH, MEDIUM, LOW
     private String recommendedAction;
     private double suggestedDiscountPrice;

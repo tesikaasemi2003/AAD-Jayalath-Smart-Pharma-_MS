@@ -274,7 +274,7 @@
 
 <script>
     /* ============ API ENDPOINTS ============ */
-    const API_BATCHES = '/api/v1/batches';
+    const API_BATCHES = '/api/v1/drug-batches';
 
     /* ============ STATE ============ */
     let batches = [];
@@ -325,7 +325,21 @@
         try {
             const res = await fetch(API_BATCHES);
             if (!res.ok) throw new Error('Failed to fetch batch data from server');
-            batches = await res.json();
+            const result = await res.json();
+
+            batches = (result.body || []).map(b => ({
+                id: b.batchNumber,
+                batchId: b.batchId,
+                brand: b.drug ? b.drug.brandName : '(Unknown)',
+                generic: b.drug ? b.drug.genericName : '',
+                mfg: b.manufactureDate,
+                exp: b.expiryDate,
+                purchase: b.purchasePrice,
+                selling: b.sellingPrice,
+                qty: b.quantityOnHand,
+                reorder: b.drug ? b.drug.reorderLevel : 0,
+            }));
+
             renderStats();
             renderTable();
         } catch (err) {

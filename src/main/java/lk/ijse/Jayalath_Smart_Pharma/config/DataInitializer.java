@@ -27,13 +27,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Role adminRole = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
-                .orElseGet(() -> {
-                    Role role = new Role();
-                    role.setRoleName(RoleName.ROLE_ADMIN);
-                    return roleRepository.save(role);
-                });
-
+        // Seed all roles the app depends on — not just ROLE_ADMIN
+        Role adminRole = seedRole(RoleName.ROLE_ADMIN);
+        seedRole(RoleName.ROLE_PHARMACIST);
+        seedRole(RoleName.ROLE_CASHIER);
 
         if (userRepository.findByEmail("tesikaasemiagp2003@gmail.com").isEmpty()) {
             User user = new User();
@@ -46,5 +43,14 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(user);
             System.out.println("====== DEFAULT ADMIN USER CREATED SUCCESSFULY ======");
         }
+    }
+
+    private Role seedRole(RoleName roleName) {
+        return roleRepository.findByRoleName(roleName)
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName(roleName);
+                    return roleRepository.save(role);
+                });
     }
 }

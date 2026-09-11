@@ -1,4 +1,4 @@
-package lk.ijse.Jayalath_Smart_Pharma.service.impl;
+package lk.ijse.Jayalath_Smart_Pharma.service.Impl;
 
 import lk.ijse.Jayalath_Smart_Pharma.constant.ResponseMessage;
 import lk.ijse.Jayalath_Smart_Pharma.dto.DrugBatchDTO;
@@ -180,6 +180,29 @@ public class DrugBatchServiceImpl implements DrugBatchService {
         }
     }
 
+    @Override
+    @Transactional
+    public void applyDiscount(Long batchId, double discountPercent) {
+        log.info("Applying {}% discount to batch ID: {}", discountPercent, batchId);
+        try {
+            Optional<DrugBatch> optionalBatch = drugBatchRepository.findById(batchId);
+            if (!optionalBatch.isPresent()) {
+                throw new RuntimeException(ResponseMessage.NOT_FOUND);
+            }
+
+            DrugBatch batch = optionalBatch.get();
+            double basePrice = batch.getSellingPrice() != null ? batch.getSellingPrice() : 0.0;
+
+            batch.setDiscountPercentage(discountPercent);
+            batch.setSellingPrice(basePrice * (1 - (discountPercent / 100.0)));
+
+            drugBatchRepository.save(batch);
+        } catch (Exception e) {
+            log.error("Error in applyDiscount method: " + e.getMessage());
+            throw e;
+        }
+    }
+
     private DrugBatchDTO convertToDTO(DrugBatch batch) {
         DrugBatchDTO dto = new DrugBatchDTO();
         dto.setBatchId(batch.getBatchId());
@@ -193,6 +216,7 @@ public class DrugBatchServiceImpl implements DrugBatchService {
 
         if (batch.getDrug() != null) {
             dto.setDrugId(batch.getDrug().getDrugId());
+            dto.setDrug(batch.getDrug());
         }
         if (batch.getInventory() != null) {
             dto.setQuantityOnHand(batch.getInventory().getQuantityOnHand());

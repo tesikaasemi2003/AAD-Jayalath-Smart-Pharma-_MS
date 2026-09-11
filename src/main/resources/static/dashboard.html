@@ -88,8 +88,6 @@
         </div>
 
         <!-- Nav links -->
-        <!-- Nav links (Clean & Ultra-Compact) -->
-        <!-- Nav links (Grouped Dropdowns) -->
         <nav class="hidden lg:flex items-center gap-2 text-xs font-medium text-slate-400">
             <a href="dashboard.html" class="px-3 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 font-semibold flex items-center gap-1.5">
                 <i class="fa-solid fa-chart-pie"></i> Dashboard
@@ -122,7 +120,6 @@
                     <a href="purchase-orders.html" class="px-4 py-2 text-xs hover:bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck"></i> Purchase Orders</a>
                 </div>
             </div>
-
 
         </nav>
 
@@ -176,7 +173,7 @@
         <div class="animate-floatUp stagger-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
             <div>
                 <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Batches</p>
-                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">1,284</p>
+                <p id="kpiTotalBatches" class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">1,284</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +4.2% vs last month</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
@@ -189,7 +186,7 @@
             <div class="absolute inset-x-0 top-0 h-1 bg-rose-500"></div>
             <div>
                 <p class="text-xs font-medium text-rose-500 dark:text-rose-400 uppercase tracking-wide">FEFO Risk · 60 Days</p>
-                <p class="font-display text-3xl font-semibold text-rose-600 dark:text-rose-400 mt-2">37</p>
+                <p id="kpiFefoRisk" class="font-display text-3xl font-semibold text-rose-600 dark:text-rose-400 mt-2">37</p>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-hourglass-half"></i> batches expiring soon</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
@@ -201,7 +198,7 @@
         <div class="animate-floatUp stagger-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
             <div>
                 <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Pending Purchase Orders</p>
-                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">12</p>
+                <p id="kpiPendingPOs" class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">12</p>
                 <p class="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-clock"></i> 3 awaiting approval</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
@@ -213,7 +210,7 @@
         <div class="animate-floatUp stagger-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-start justify-between hover:border-emerald-400/40 transition-colors">
             <div>
                 <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Sales Today</p>
-                <p class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">Rs. 428,650</p>
+                <p id="kpiTotalSales" class="font-display text-3xl font-semibold text-slate-900 dark:text-slate-50 mt-2">Rs. 428,650</p>
                 <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-2 flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +11.8% vs yesterday</p>
             </div>
             <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center shrink-0">
@@ -235,7 +232,7 @@
                                 class="stroke-rose-500 gauge-ring" stroke-dasharray="213.6" stroke-dashoffset="213.6" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span class="font-display font-bold text-lg text-rose-600 dark:text-rose-400 leading-none">28</span>
+                        <span id="alertDays" class="font-display font-bold text-lg text-rose-600 dark:text-rose-400 leading-none">28</span>
                         <span class="text-[9px] text-slate-400 font-mono mt-0.5">DAYS</span>
                     </div>
                 </div>
@@ -243,8 +240,8 @@
                     <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider text-rose-600 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-full px-2 py-0.5 mb-1.5">
                       <i class="fa-solid fa-bolt"></i> AI EXPIRY ALERT
                     </span>
-                    <p class="font-display font-semibold text-slate-900 dark:text-slate-50">Batch #B102 · Amoxicillin 500mg</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">840 units on hand · expires in <span class="font-semibold text-rose-500">28 days</span> · FEFO priority</p>
+                    <p id="alertBatchTitle" class="font-display font-semibold text-slate-900 dark:text-slate-50">Batch #B102 · Amoxicillin 500mg</p>
+                    <p id="alertBatchDetail" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">840 units on hand · expires in <span class="font-semibold text-rose-500">28 days</span> · FEFO priority</p>
                 </div>
             </div>
 
@@ -255,7 +252,7 @@
             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
                 <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">
                     <i class="fa-solid fa-robot text-emerald-500 mr-1.5"></i>
-                    Model recommends a <span class="font-semibold text-slate-900 dark:text-slate-100">20% dynamic discount</span> to accelerate sell-through before expiry and reduce projected write-off of <span class="font-semibold text-rose-500">Rs. 58,400</span>.
+                    <span id="alertRecommendation">Model recommends a <span class="font-semibold text-slate-900 dark:text-slate-100">20% dynamic discount</span> to accelerate sell-through before expiry and reduce projected write-off of <span class="font-semibold text-rose-500">Rs. 58,400</span>.</span>
                 </p>
                 <button id="applyDiscountBtn"
                         class="shrink-0 inline-flex items-center justify-center gap-2 bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white text-sm font-semibold rounded-lg px-4 py-2.5 transition-colors shadow-lg shadow-rose-500/20 disabled:opacity-60 disabled:cursor-not-allowed">
@@ -513,17 +510,19 @@
             'Authorization': `Bearer ${token}`
         };
 
+        let topRiskBatch = null;
+
         try {
             const riskRes = await fetch(`${API_BASE}/analytics/expiry-risk`, { headers });
             if (riskRes.ok) {
                 const riskJson = await riskRes.json();
-                const riskList = riskJson.data || riskJson.body;
+                const riskList = riskJson.body || [];
 
                 if (Array.isArray(riskList) && donutChartInstance) {
                     let critical = 0, warning = 0, moderate = 0, safe = 0;
 
                     riskList.forEach(item => {
-                        const days = item.daysToExpiry || item.daysRemaining || 91;
+                        const days = item.daysToExpiry;
                         if (days <= 30) critical++;
                         else if (days <= 60) warning++;
                         else if (days <= 90) moderate++;
@@ -533,9 +532,69 @@
                     donutChartInstance.data.datasets[0].data = [critical, warning, moderate, safe];
                     donutChartInstance.update();
                 }
+
+                if (Array.isArray(riskList) && riskList.length > 0) {
+                    topRiskBatch = riskList[0];
+                }
             }
         } catch (err) {
             console.error("Analytics fetch error:", err);
+        }
+
+        const gaugeRing = document.getElementById('expiryGaugeRing');
+        const alertDays = document.getElementById('alertDays');
+        const alertBatchTitle = document.getElementById('alertBatchTitle');
+        const alertBatchDetail = document.getElementById('alertBatchDetail');
+        const alertRecommendation = document.getElementById('alertRecommendation');
+        const applyBtn = document.getElementById('applyDiscountBtn');
+
+        if (topRiskBatch) {
+            const days = topRiskBatch.daysToExpiry;
+            const riskWindow = 60;
+            const fraction = 1 - Math.min(Math.max(days, 0) / riskWindow, 1);
+            const circumference = 2 * Math.PI * 34;
+
+            if (gaugeRing) gaugeRing.style.strokeDashoffset = String(circumference * (1 - fraction));
+            if (alertDays) alertDays.textContent = days;
+            if (alertBatchTitle) alertBatchTitle.textContent = `Batch #${topRiskBatch.batchNumber} · ${topRiskBatch.drugName || ''}`;
+            if (alertBatchDetail) alertBatchDetail.innerHTML = `${topRiskBatch.quantityOnHand} units on hand · expires in <span class="font-semibold text-rose-500">${days} days</span> · FEFO priority`;
+
+            const discountPercent = topRiskBatch.riskLevel === 'HIGH' ? 30 : topRiskBatch.riskLevel === 'MEDIUM' ? 15 : 0;
+            if (alertRecommendation) {
+                alertRecommendation.innerHTML = `Model recommends a <span class="font-semibold text-slate-900 dark:text-slate-100">${discountPercent}% dynamic discount</span> to accelerate sell-through before expiry (suggested price: Rs. ${topRiskBatch.suggestedDiscountPrice.toFixed(2)}).`;
+            }
+
+            if (applyBtn) {
+                applyBtn.dataset.batchId = topRiskBatch.batchId;
+                applyBtn.dataset.discountPercent = discountPercent;
+                document.getElementById('discountBtnLabel').textContent = `Apply ${discountPercent}% Dynamic Discount`;
+                applyBtn.disabled = discountPercent === 0;
+            }
+        } else {
+            if (alertBatchTitle) alertBatchTitle.textContent = 'No high-risk batches right now';
+            if (alertBatchDetail) alertBatchDetail.textContent = 'All batches are outside the 90-day expiry window.';
+            if (alertRecommendation) alertRecommendation.textContent = 'No action needed at this time.';
+            if (applyBtn) applyBtn.disabled = true;
+        }
+
+        try {
+            const metricsRes = await fetch(`${API_BASE}/analytics/dashboard-metrics`, { headers });
+            if (metricsRes.ok) {
+                const metricsJson = await metricsRes.json();
+                const m = metricsJson.body || {};
+
+                const kpiTotalBatches = document.getElementById('kpiTotalBatches');
+                const kpiFefoRisk = document.getElementById('kpiFefoRisk');
+                const kpiPendingPOs = document.getElementById('kpiPendingPOs');
+                const kpiTotalSales = document.getElementById('kpiTotalSales');
+
+                if (kpiTotalBatches) kpiTotalBatches.textContent = (m.totalBatches ?? 0).toLocaleString();
+                if (kpiFefoRisk) kpiFefoRisk.textContent = (m.expiringSoonCount ?? 0).toLocaleString();
+                if (kpiPendingPOs) kpiPendingPOs.textContent = (m.pendingPurchaseOrders ?? 0).toLocaleString();
+                if (kpiTotalSales) kpiTotalSales.textContent = `Rs. ${(m.totalSalesToday ?? 0).toLocaleString()}`;
+            }
+        } catch (err) {
+            console.error('Failed to load dashboard metrics', err);
         }
     }
 
@@ -567,17 +626,6 @@
             lastUpdated.textContent = 'Last sync ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Radial Expiry Gauge
-        const ring = document.getElementById('expiryGaugeRing');
-        if (ring) {
-            const circumference = 2 * Math.PI * 34;
-            const daysRemaining = 28;
-            const riskWindow = 60;
-            const fraction = 1 - Math.min(daysRemaining / riskWindow, 1);
-            const offset = circumference * (1 - fraction);
-            requestAnimationFrame(() => { ring.style.strokeDashoffset = offset; });
-        }
-
         // Discount Button Handler
         const applyBtn = document.getElementById('applyDiscountBtn');
         const btnLabel = document.getElementById('discountBtnLabel');
@@ -585,19 +633,23 @@
         const statusEl = document.getElementById('discountStatus');
 
         applyBtn?.addEventListener('click', async () => {
+            const batchId = applyBtn.dataset.batchId;
+            const discountPercent = Number(applyBtn.dataset.discountPercent || 0);
+            if (!batchId || !discountPercent) return;
+
             applyBtn.disabled = true;
             btnIcon.className = 'fa-solid fa-spinner fa-spin';
             btnLabel.textContent = 'Applying discount…';
             statusEl.classList.add('hidden');
 
             try {
-                const res = await fetch(`${API_BASE}/batches/102/apply-discount`, {
+                const res = await fetch(`${API_BASE}/drug-batches/${batchId}/apply-discount`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ discountPercent: 20 }),
+                    body: JSON.stringify({ discountPercent }),
                 });
 
                 if (res.status === 401 || res.status === 403) {
@@ -609,7 +661,7 @@
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.message || `Request failed (HTTP ${res.status})`);
 
-                statusEl.textContent = `✓ 20% dynamic discount applied to Batch #B102. New price effective immediately.`;
+                statusEl.textContent = `✓ ${discountPercent}% dynamic discount applied. New price effective immediately.`;
                 statusEl.className = 'mt-4 text-sm rounded-lg px-3 py-2 border text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/30';
                 statusEl.classList.remove('hidden');
 
@@ -623,7 +675,7 @@
                     item.innerHTML = `
                       <span class="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
                       <div>
-                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #B102</span> — 20% discount applied</p>
+                        <p class="text-slate-700 dark:text-slate-200"><span class="font-medium">Batch #${batchId}</span> — ${discountPercent}% discount applied</p>
                         <p class="text-xs text-slate-400 font-mono mt-0.5">Just now · by AI Engine</p>
                       </div>`;
                     log.prepend(item);
@@ -635,7 +687,7 @@
                 statusEl.classList.remove('hidden');
                 applyBtn.disabled = false;
                 btnIcon.className = 'fa-solid fa-tag';
-                btnLabel.textContent = 'Apply 20% Dynamic Discount';
+                btnLabel.textContent = `Apply ${discountPercent}% Dynamic Discount`;
             }
         });
 

@@ -14,4 +14,6 @@ public class DashboardMetricsDTO {
     private long totalOrdersToday;
     private long lowStockCount;
     private long expiringSoonCount;
+    private long totalBatches;
+    private long pendingPurchaseOrders;
 }

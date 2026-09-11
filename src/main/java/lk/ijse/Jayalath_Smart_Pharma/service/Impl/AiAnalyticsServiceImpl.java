@@ -5,8 +5,10 @@ import lk.ijse.Jayalath_Smart_Pharma.dto.ExpiryRiskAnalysisResponseDTO;
 import lk.ijse.Jayalath_Smart_Pharma.entity.DrugBatch;
 import lk.ijse.Jayalath_Smart_Pharma.entity.Inventory;
 import lk.ijse.Jayalath_Smart_Pharma.entity.SalesOrder;
+import lk.ijse.Jayalath_Smart_Pharma.enumaration.status;
 import lk.ijse.Jayalath_Smart_Pharma.repository.DrugBatchRepository;
 import lk.ijse.Jayalath_Smart_Pharma.repository.InventoryRepository;
+import lk.ijse.Jayalath_Smart_Pharma.repository.PurchaseOrderRepository;
 import lk.ijse.Jayalath_Smart_Pharma.repository.SalesOrderRepository;
 import lk.ijse.Jayalath_Smart_Pharma.service.AiAnalyticsService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +26,16 @@ public class AiAnalyticsServiceImpl implements AiAnalyticsService {
     private final DrugBatchRepository drugBatchRepository;
     private final InventoryRepository inventoryRepository;
     private final SalesOrderRepository salesOrderRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
 
     public AiAnalyticsServiceImpl(DrugBatchRepository drugBatchRepository,
                                   InventoryRepository inventoryRepository,
-                                  SalesOrderRepository salesOrderRepository) {
+                                  SalesOrderRepository salesOrderRepository,
+                                  PurchaseOrderRepository purchaseOrderRepository) {
         this.drugBatchRepository = drugBatchRepository;
         this.inventoryRepository = inventoryRepository;
         this.salesOrderRepository = salesOrderRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
     }
 
     @Override
@@ -51,6 +56,7 @@ public class AiAnalyticsServiceImpl implements AiAnalyticsService {
                     dto.setBatchId(batch.getBatchId());
                     dto.setBatchNumber(batch.getBatchNumber());
                     dto.setExpiryDate(batch.getExpiryDate());
+                    dto.setDaysToExpiry(daysToExpiry);
                     dto.setQuantityOnHand(qty);
 
                     if (batch.getDrug() != null) {
@@ -77,6 +83,8 @@ public class AiAnalyticsServiceImpl implements AiAnalyticsService {
                 }
             }
         }
+
+        riskList.sort((a, b) -> Long.compare(a.getDaysToExpiry(), b.getDaysToExpiry()));
         return riskList;
     }
 
@@ -105,15 +113,21 @@ public class AiAnalyticsServiceImpl implements AiAnalyticsService {
         long lowStock = allInventory.stream()
                 .filter(inv -> inv.getQuantityOnHand() < 10)
                 .count();
-
         metrics.setLowStockCount(lowStock);
 
-        LocalDate nextMonth = LocalDate.now().plusDays(30);
+        // Aligned with the "FEFO Risk · 60 Days" card
+        LocalDate riskWindow = LocalDate.now().plusDays(60);
         long expiringSoon = drugBatchRepository.findAll().stream()
-                .filter(b -> b.getExpiryDate() != null && !b.getExpiryDate().isAfter(nextMonth))
+                .filter(b -> b.getExpiryDate() != null && !b.getExpiryDate().isAfter(riskWindow))
                 .count();
-
         metrics.setExpiringSoonCount(expiringSoon);
+
+        metrics.setTotalBatches(drugBatchRepository.count());
+
+        long pendingPOs = purchaseOrderRepository.findAll().stream()
+                .filter(po -> po.getStatus() == status.DRAFT)
+                .count();
+        metrics.setPendingPurchaseOrders(pendingPOs);
 
         return metrics;
     }

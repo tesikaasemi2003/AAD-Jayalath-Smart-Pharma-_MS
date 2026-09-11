@@ -358,11 +358,11 @@
 
             const jsonResponse = await res.json().catch(() => ({}));
 
-            if (!res.ok || jsonResponse.code !== 200) {
+            if (!res.ok || (jsonResponse.status !== undefined && jsonResponse.status !== 1 && jsonResponse.status !== 200)) {
                 throw new Error(jsonResponse.message || 'Google sign-in failed. Please try again.');
             }
 
-            const authData = jsonResponse.data; // AuthResponseDTO extracted from CommonResponse
+            const authData = jsonResponse.body; // AuthResponseDTO extracted from CommonResponse
 
             if (!authData || !authData.token) {
                 throw new Error('Google sign-in succeeded but no token was returned by the server.');
